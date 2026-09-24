@@ -1,0 +1,28 @@
+# --- Confidential: never commit (secrets and private data stay on the local machine) ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*service-account*.json
+*credentials*.json
+credentials/
+secrets/
+private/
+*.xlsx
+*.xls
+*.csv
+
+# --- Node / build output ---
+node_modules/
+dist/
+build/
+.wrangler/
+*.log
+npm-debug.log*
+
+# --- IDE / OS ---
+.idea/
+.vscode/
+.DS_Store
