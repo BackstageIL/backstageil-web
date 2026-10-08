@@ -1,1 +1,98 @@
 @import "tailwindcss";
+@import "@fontsource-variable/archivo/wdth.css";
+@import "@fontsource-variable/atkinson-hyperlegible-next";
+
+/*
+ * Tokens. Light is a printed spec sheet in navy ink; dark is the blue of backstage running
+ * lights. Spike-tape yellow marks positions (centre line, section starts) and nothing else.
+ * Theme: follows the device, or data-theme="light|dark" when the visitor chose one.
+ */
+:root {
+  --paper: #f4f6f8;
+  --sheet: #ffffff;
+  --ink: #1a2233;
+  --muted: #5b6577;
+  --rule: #d5dae1;
+  --cue: #2348c4;
+  --spike: #e8b400;
+  --plan-floor: #e7ebf0;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0e1626;
+    --sheet: #16213a;
+    --ink: #e6ebf5;
+    --muted: #9aa6bd;
+    --rule: #2a3754;
+    --cue: #8fb0ff;
+    --spike: #f5c518;
+    --plan-floor: #1d2a47;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --paper: #0e1626;
+  --sheet: #16213a;
+  --ink: #e6ebf5;
+  --muted: #9aa6bd;
+  --rule: #2a3754;
+  --cue: #8fb0ff;
+  --spike: #f5c518;
+  --plan-floor: #1d2a47;
+  color-scheme: dark;
+}
+
+@theme {
+  --color-paper: var(--paper);
+  --color-sheet: var(--sheet);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-rule: var(--rule);
+  --color-cue: var(--cue);
+  --color-spike: var(--spike);
+  --font-display: "Archivo Variable", "Arial Narrow", sans-serif;
+  --font-sans: "Atkinson Hyperlegible Next Variable", system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    line-height: 1.5;
+  }
+
+  a {
+    color: var(--cue);
+    text-underline-offset: 0.2em;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--cue);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+    }
+  }
+}
+
+@utility font-stencil {
+  /* Condensed Archivo with tabular figures: headings and every number */
+  font-family: var(--font-display);
+  font-stretch: 75%;
+  font-variant-numeric: tabular-nums;
+}
