@@ -1,0 +1,250 @@
+---
+/**
+ * The hall's stage, drawn to scale from its measurements: stage floor with a 1 m grid,
+ * proscenium opening, first pipe, centre-line spike mark and the FOH position in the house.
+ */
+import { en } from "../i18n/en";
+import type { HallDocument } from "../lib/api";
+import { gridLines, meters, stagePlan } from "../lib/stage-plan";
+
+interface Props {
+  hall: HallDocument;
+}
+
+const plan = stagePlan(Astro.props.hall);
+const t = en.hall;
+
+const description = plan
+  ? [
+      `Stage ${meters(plan.width)} wide and ${meters(plan.depth)} deep`,
+      plan.proscenium && `proscenium opening ${meters(plan.proscenium)}`,
+      plan.firstPipe && `first pipe ${meters(plan.firstPipe)} upstage of the proscenium`,
+      plan.foh && `FOH ${meters(plan.foh)} from the stage`,
+    ]
+      .filter(Boolean)
+      .join(", ")
+  : "";
+---
+
+{plan ? (
+  <figure class="stage-plan">
+    <svg
+      viewBox={`${plan.viewBox.x} ${plan.viewBox.y} ${plan.viewBox.width} ${plan.viewBox.height}`}
+      role="img"
+      aria-label={`${t.plan}: ${description}.`}
+      style={`--t: ${plan.text}px`}
+    >
+      {/* Stage floor and its 1 m grid */}
+      <rect class="floor" x={-plan.width / 2} y={0} width={plan.width} height={plan.depth} />
+      {gridLines(plan.width).map((x) => (
+        <line
+          class="grid"
+          x1={-plan.width / 2 + x}
+          y1={0}
+          x2={-plan.width / 2 + x}
+          y2={plan.depth}
+        />
+      ))}
+      {gridLines(plan.depth).map((y) => (
+        <line class="grid" x1={-plan.width / 2} y1={y} x2={plan.width / 2} y2={y} />
+      ))}
+      <rect class="edge" x={-plan.width / 2} y={0} width={plan.width} height={plan.depth} />
+      <text class="label muted" x={0} y={plan.text * 1.6} text-anchor="middle">
+        {t.upstage}
+      </text>
+
+      {/* Centre line, with a spike mark at downstage centre */}
+      <line class="centre" x1={0} y1={0} x2={0} y2={plan.depth} />
+      <rect
+        class="spike"
+        x={-plan.text * 0.5}
+        y={plan.depth - plan.text * 1.1}
+        width={plan.text}
+        height={plan.text * 0.4}
+      />
+
+      {/* First pipe */}
+      {plan.firstPipe && (
+        <g>
+          <line
+            class="pipe"
+            x1={-plan.width / 2}
+            y1={plan.depth - plan.firstPipe}
+            x2={plan.width / 2}
+            y2={plan.depth - plan.firstPipe}
+          />
+          <text
+            class="label"
+            x={-plan.width / 2 + plan.text * 0.4}
+            y={plan.depth - plan.firstPipe - plan.text * 0.4}
+          >
+            {t.firstPipe} {meters(plan.firstPipe)}
+          </text>
+        </g>
+      )}
+
+      {/* Proscenium walls on both sides of the opening */}
+      {plan.proscenium && (
+        <g class="wall">
+          <line x1={-plan.wallEnd} y1={plan.depth} x2={-plan.proscenium / 2} y2={plan.depth} />
+          <line x1={plan.proscenium / 2} y1={plan.depth} x2={plan.wallEnd} y2={plan.depth} />
+        </g>
+      )}
+
+      {/* Width, on top */}
+      <g class="dimension">
+        <line x1={-plan.width / 2} y1={-plan.text} x2={plan.width / 2} y2={-plan.text} />
+        <line
+          x1={-plan.width / 2}
+          y1={-plan.text * 1.5}
+          x2={-plan.width / 2}
+          y2={-plan.text * 0.5}
+        />
+        <line x1={plan.width / 2} y1={-plan.text * 1.5} x2={plan.width / 2} y2={-plan.text * 0.5} />
+      </g>
+      <text class="label strong" x={0} y={-plan.text * 1.5} text-anchor="middle">
+        {meters(plan.width)}
+      </text>
+
+      {/* Depth, on the left */}
+      <g class="dimension">
+        <line
+          x1={-plan.wallEnd - plan.text}
+          y1={0}
+          x2={-plan.wallEnd - plan.text}
+          y2={plan.depth}
+        />
+        <line
+          x1={-plan.wallEnd - plan.text * 1.5}
+          y1={0}
+          x2={-plan.wallEnd - plan.text * 0.5}
+          y2={0}
+        />
+        <line
+          x1={-plan.wallEnd - plan.text * 1.5}
+          y1={plan.depth}
+          x2={-plan.wallEnd - plan.text * 0.5}
+          y2={plan.depth}
+        />
+      </g>
+      <text
+        class="label strong"
+        x={-plan.wallEnd - plan.text * 1.5}
+        y={plan.depth / 2}
+        text-anchor="middle"
+        transform={`rotate(-90 ${-plan.wallEnd - plan.text * 1.5} ${plan.depth / 2})`}
+      >
+        {meters(plan.depth)}
+      </text>
+
+      {/* Proscenium opening, under the stage edge */}
+      {plan.proscenium && (
+        <text class="label" x={0} y={plan.depth + plan.text * 1.4} text-anchor="middle">
+          {t.proscenium} {meters(plan.proscenium)}
+        </text>
+      )}
+
+      {/* House and FOH */}
+      {plan.foh ? (
+        <g>
+          <line class="throw" x1={0} y1={plan.depth} x2={0} y2={plan.depth + plan.foh} />
+          <rect
+            class="foh"
+            x={-plan.text * 1.6}
+            y={plan.depth + plan.foh - plan.text * 0.5}
+            width={plan.text * 3.2}
+            height={plan.text * 1.2}
+          />
+          <text
+            class="label strong"
+            x={plan.text * 2.2}
+            y={plan.depth + plan.foh + plan.text * 0.4}
+          >
+            {t.foh} {meters(plan.foh)}
+          </text>
+          <text
+            class="label muted"
+            x={0}
+            y={plan.depth + plan.foh + plan.text * 2.6}
+            text-anchor="middle"
+          >
+            {t.house}
+          </text>
+        </g>
+      ) : (
+        <text class="label muted" x={0} y={plan.depth + plan.text * 3} text-anchor="middle">
+          {t.house}
+        </text>
+      )}
+    </svg>
+    <figcaption class="mt-2 text-sm text-muted">{t.planScale}</figcaption>
+  </figure>
+) : (
+  <p class="text-sm text-muted">{t.planMissing}</p>
+)}
+
+<style>
+  .stage-plan svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 70vh;
+    font-family: var(--font-display);
+    font-stretch: 75%;
+    font-variant-numeric: tabular-nums;
+  }
+  .floor {
+    fill: var(--plan-floor);
+  }
+  .grid {
+    stroke: var(--rule);
+    stroke-width: calc(var(--t) * 0.04);
+  }
+  .edge {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: calc(var(--t) * 0.12);
+  }
+  .centre {
+    stroke: var(--muted);
+    stroke-width: calc(var(--t) * 0.06);
+    stroke-dasharray: calc(var(--t) * 0.6) calc(var(--t) * 0.3);
+  }
+  .spike {
+    fill: var(--spike);
+  }
+  .pipe {
+    stroke: var(--cue);
+    stroke-width: calc(var(--t) * 0.1);
+    stroke-dasharray: calc(var(--t) * 0.5) calc(var(--t) * 0.25);
+  }
+  .wall line {
+    stroke: var(--ink);
+    stroke-width: calc(var(--t) * 0.45);
+    stroke-linecap: butt;
+  }
+  .dimension line {
+    stroke: var(--muted);
+    stroke-width: calc(var(--t) * 0.06);
+  }
+  .throw {
+    stroke: var(--muted);
+    stroke-width: calc(var(--t) * 0.06);
+    stroke-dasharray: calc(var(--t) * 0.15) calc(var(--t) * 0.3);
+  }
+  .foh {
+    fill: var(--sheet);
+    stroke: var(--ink);
+    stroke-width: calc(var(--t) * 0.1);
+  }
+  .label {
+    fill: var(--ink);
+    font-size: var(--t);
+  }
+  .label.strong {
+    font-weight: 700;
+  }
+  .label.muted {
+    fill: var(--muted);
+  }
+</style>

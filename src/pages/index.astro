@@ -1,29 +1,21 @@
 ---
-// Placeholder (BSIL-29 PR 1): proves the build reads the API. The designed site comes in PR 2.
-import "../styles/global.css";
+/** Home: find a venue by city, then venue; every hall with its stage size and outline. */
+import VenueBrowser from "../components/VenueBrowser";
+import { en } from "../i18n/en";
+import Base from "../layouts/Base.astro";
 import { api } from "../lib/site-api";
+import { toListItems } from "../lib/venue-list";
 
-const venues = await api.listVenues();
+const summaries = await api.listVenues();
+const venues = toListItems(await Promise.all(summaries.map((venue) => api.venue(venue.slug))));
 ---
 
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="robots" content="noindex" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>BackstageIL</title>
-  </head>
-  <body class="mx-auto max-w-2xl p-6 font-sans">
-    <h1 class="text-2xl font-bold">BackstageIL</h1>
-    <p class="mt-2">Technical information about performance venues in Israel. Coming soon.</p>
-    <p class="mt-6 text-sm">{venues.length} published venues:</p>
-    <ul class="mt-2 list-disc ps-6 text-sm">
-      {venues.map((venue) => (
-        <li>
-          {venue.name}, {venue.city.name_en}
-        </li>
-      ))}
-    </ul>
-  </body>
-</html>
+<Base title={en.site.name} description={en.site.tagline}>
+  <h1 class="font-stencil max-w-3xl text-4xl leading-tight font-bold sm:text-6xl">
+    {en.home.title}
+  </h1>
+  <p class="mt-3 max-w-2xl text-lg text-muted">{en.home.intro}</p>
+  <div class="max-w-3xl">
+    <VenueBrowser client:load venues={venues} />
+  </div>
+</Base>
