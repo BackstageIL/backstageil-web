@@ -41,17 +41,11 @@ export const en = {
       "Everything on BackstageIL comes from venues and the crews who work in them. Write to us and we'll add it.",
     addressLabel: "Email",
     requests: {
-      crewPlace: {
-        title: "Recommend parking and tips for crews",
-        text: "Where the crew can park, the loading entrance, a Waze pin that takes you to the right gate, a store or pharmacy nearby. Send us your recommendations.",
-        subject: "Crew recommendation",
+      recommendation: {
+        title: "Recommend a place near a venue",
+        text: "Crew parking, the loading entrance, a Waze tip, a music store, pharmacy or supermarket, a restaurant, café or hotel. Tell us the venue and what you recommend.",
+        subject: "Recommendation near a venue",
         action: "Send a recommendation",
-      },
-      listing: {
-        title: "Have a business near a venue?",
-        text: "A restaurant, café, bar or hotel near a venue? Write to us and we'll get back to you.",
-        subject: "Business near a venue",
-        action: "Write to us",
       },
       photos: {
         title: "Send photos of a hall",
