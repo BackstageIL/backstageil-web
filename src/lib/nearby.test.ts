@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import type { Recommendation } from "./api";
 import { mailto } from "./contact";
-import { distance, groupNearby, mapsLink, telLink } from "./nearby";
+import { distance, groupNearby, mapsLink, telLink, wazeLink } from "./nearby";
 
 const place = (name: string, category: Recommendation["category"]) =>
   ({ id: 1, name, category, is_sponsored: false }) as Recommendation;
@@ -42,6 +42,12 @@ describe("helpers", () => {
   it("searches the venue on Google Maps", () => {
     expect(mapsLink(["Beit HaAm", null, "Kefar Blum"])).toBe(
       "https://www.google.com/maps/search/?api=1&query=Beit%20HaAm%2C%20Kefar%20Blum%2C%20Israel",
+    );
+  });
+
+  it("opens Waze navigating to the venue", () => {
+    expect(wazeLink(["Beit HaAm", "Kibbutz Kfar Blum", "Kefar Blum"])).toBe(
+      "https://waze.com/ul?q=Beit%20HaAm%2C%20Kibbutz%20Kfar%20Blum%2C%20Kefar%20Blum%2C%20Israel&navigate=yes",
     );
   });
 

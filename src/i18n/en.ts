@@ -42,16 +42,16 @@ export const en = {
     addressLabel: "Email",
     requests: {
       crewPlace: {
-        title: "Suggest a place for crews",
-        text: "A music store, pharmacy, supermarket or parking near a venue. Listing is free.",
-        subject: "Suggest a place for crews",
-        action: "Suggest a place",
+        title: "Recommend parking and tips for crews",
+        text: "Where the crew can park, the loading entrance, a Waze pin that takes you to the right gate, a store or pharmacy nearby. Send us your recommendations.",
+        subject: "Crew recommendation",
+        action: "Send a recommendation",
       },
       listing: {
-        title: "List your restaurant, café or hotel",
-        text: "Show your business to the crews working at a venue near you. Paid listing; we'll send the details.",
-        subject: "Business listing",
-        action: "Ask about a listing",
+        title: "Have a business near a venue?",
+        text: "A restaurant, café, bar or hotel near a venue? Write to us and we'll get back to you.",
+        subject: "Business near a venue",
+        action: "Write to us",
       },
       photos: {
         title: "Send photos of a hall",
@@ -122,6 +122,7 @@ export const en = {
     description: (name: string, city: string) =>
       `Technical information for ${name}, ${city}: halls, stage sizes and places nearby for crews.`,
     map: "Open in Google Maps",
+    waze: "Open in Waze",
     website: "Venue website",
     halls: "Halls",
     nearby: "Nearby",
@@ -130,16 +131,16 @@ export const en = {
       crew: {
         title: "Crew essentials",
         empty: "No places listed yet.",
-        invite: "Know a place crews need near here?",
-        action: "Suggest it",
-        subject: (venue: string) => `Suggest a place near ${venue}`,
+        invite: "Know where crews can park, or a tip for getting in?",
+        action: "Send a recommendation",
+        subject: (venue: string) => `Crew recommendation for ${venue}`,
       },
       food: {
         title: "Food and stay",
         empty: "No places listed yet.",
         invite: "Own a restaurant, café or hotel near this venue?",
-        action: "Get listed",
-        subject: (venue: string) => `Business listing near ${venue}`,
+        action: "Write to us",
+        subject: (venue: string) => `Business near ${venue}`,
       },
     },
     category: {
@@ -165,6 +166,7 @@ export const en = {
     centreLine: "CL",
     foh: "FOH",
     contents: "On this page",
+    nearby: "Parking, food and places near this venue",
     photos: "Photos",
     noPhotos: "No photos of this hall yet.",
     sendPhotos: "Have photos of this hall?",

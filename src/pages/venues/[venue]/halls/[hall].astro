@@ -68,6 +68,9 @@ const description = `Technical information for ${where} (${venue.city.name_en}):
     <aside class="lg:sticky lg:top-6 lg:self-start">
       <h2 class="sr-only">{t.plan}</h2>
       <StagePlan hall={hall} />
+      <p class="mt-6 text-sm">
+        <a href={`/venues/${venue.slug}/#nearby`}>{t.nearby}</a>
+      </p>
     </aside>
 
     <div class="max-w-2xl">

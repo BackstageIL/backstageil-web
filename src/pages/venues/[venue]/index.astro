@@ -6,7 +6,7 @@ import HallRow, { OUTLINE_HEIGHT, OUTLINE_WIDTH } from "../../../components/Hall
 import { en } from "../../../i18n/en";
 import Base from "../../../layouts/Base.astro";
 import { mailto } from "../../../lib/contact";
-import { distance, groupNearby, mapsLink, telLink } from "../../../lib/nearby";
+import { distance, groupNearby, mapsLink, telLink, wazeLink } from "../../../lib/nearby";
 import { api } from "../../../lib/site-api";
 import { outlineScale, toListItems } from "../../../lib/venue-list";
 
@@ -43,6 +43,9 @@ const groups = (["crew", "food"] as const).map((id) => ({
   <p class="mt-2 flex flex-wrap gap-x-5 gap-y-1">
     <a href={mapsLink([venue.name, venue.street_address, venue.city.name_en])} rel="noopener">
       {t.map}
+    </a>
+    <a href={wazeLink([venue.name, venue.street_address, venue.city.name_en])} rel="noopener">
+      {t.waze}
     </a>
     {venue.website && (
       <a href={venue.website} rel="noopener">
