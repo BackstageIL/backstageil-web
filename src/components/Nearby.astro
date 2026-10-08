@@ -1,0 +1,74 @@
+---
+/**
+ * Places near a venue in two groups, Crew essentials and Food and stay. Each group always shows:
+ * its places, or a placeholder when there are none yet, and an invitation to send more.
+ * Shown on the venue page and on every hall page.
+ */
+import { PUBLIC_CONTACT_EMAIL } from "astro:env/client";
+
+import { en } from "../i18n/en";
+import type { Recommendation } from "../lib/api";
+import { mailto } from "../lib/contact";
+import { distance, groupNearby, telLink } from "../lib/nearby";
+
+interface Props {
+  venueName: string;
+  places: Recommendation[];
+}
+
+const { venueName, places } = Astro.props;
+const t = en.venue;
+const grouped = groupNearby(places);
+const groups = (["crew", "food"] as const).map((id) => ({
+  id,
+  ...t.groups[id],
+  places: grouped[id],
+}));
+---
+
+{groups.map((group) => (
+  <div class="mt-5 first:mt-3">
+    <h3 class="font-semibold">{group.title}</h3>
+    {group.places.length > 0 ? (
+      <ul class="mt-2 border-t border-rule">
+        {group.places.map((place) => (
+          <li class="border-b border-rule py-3">
+            <div class="flex flex-wrap items-baseline justify-between gap-x-4">
+              <span class="font-semibold">
+                {place.website ? (
+                  <a href={place.website} rel="noopener">
+                    {place.name}
+                  </a>
+                ) : (
+                  place.name
+                )}
+              </span>
+              <span class="text-sm text-muted">
+                {t.category[place.category]}
+                {place.distance_m !== null && `, ${distance(place.distance_m)}`}
+              </span>
+            </div>
+            {place.is_sponsored && (
+              <p class="mt-1 inline-block rounded border border-rule px-1.5 text-xs text-muted">
+                {t.sponsored}
+              </p>
+            )}
+            {place.address && <p class="mt-1 text-sm">{place.address}</p>}
+            {place.note && <p class="mt-1 text-sm text-muted">{place.note}</p>}
+            {place.phone && (
+              <p class="mt-1 text-sm">
+                <a href={telLink(place.phone)}>{place.phone}</a>
+              </p>
+            )}
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p class="mt-2 border-t border-rule pt-2 text-sm text-muted">{group.empty}</p>
+    )}
+    <p class="mt-2 text-sm">
+      {group.invite}{" "}
+      <a href={mailto(PUBLIC_CONTACT_EMAIL, group.subject(venueName))}>{group.action}</a>
+    </p>
+  </div>
+))}

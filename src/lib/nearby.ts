@@ -37,8 +37,15 @@ export function telLink(phone: string): string {
   return `tel:${phone.replace(/[^\d+]/g, "")}`;
 }
 
+const searchQuery = (parts: (string | null | undefined)[]) =>
+  encodeURIComponent([...parts.filter(Boolean), "Israel"].join(", "));
+
 /** A Google Maps search for the venue (no API key needed). */
 export function mapsLink(parts: (string | null | undefined)[]): string {
-  const query = [...parts.filter(Boolean), "Israel"].join(", ");
-  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+  return `https://www.google.com/maps/search/?api=1&query=${searchQuery(parts)}`;
+}
+
+/** Waze search for the venue, ready to navigate (opens the app on phones). */
+export function wazeLink(parts: (string | null | undefined)[]): string {
+  return `https://waze.com/ul?q=${searchQuery(parts)}&navigate=yes`;
 }

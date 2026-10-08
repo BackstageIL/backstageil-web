@@ -1,12 +1,11 @@
 ---
 /** A venue: address and map, its halls (same outlines as the home list), and places nearby. */
-import { PUBLIC_CONTACT_EMAIL } from "astro:env/client";
 
 import HallRow, { OUTLINE_HEIGHT, OUTLINE_WIDTH } from "../../../components/HallRow";
+import Nearby from "../../../components/Nearby.astro";
 import { en } from "../../../i18n/en";
 import Base from "../../../layouts/Base.astro";
-import { mailto } from "../../../lib/contact";
-import { distance, groupNearby, mapsLink, telLink } from "../../../lib/nearby";
+import { mapsLink, wazeLink } from "../../../lib/nearby";
 import { api } from "../../../lib/site-api";
 import { outlineScale, toListItems } from "../../../lib/venue-list";
 
@@ -22,13 +21,8 @@ const all = toListItems(
 const scale = outlineScale(all, OUTLINE_WIDTH, OUTLINE_HEIGHT); // same scale as the home list
 const venue = await api.venue(slug);
 const item = all.find((v) => v.slug === slug);
-const nearby = groupNearby(await api.recommendations(slug));
+const places = await api.recommendations(slug);
 const t = en.venue;
-const groups = (["crew", "food"] as const).map((id) => ({
-  id,
-  ...t.groups[id],
-  places: nearby[id],
-}));
 ---
 
 <Base title={venue.name} description={t.description(venue.name, venue.city.name_en)}>
@@ -43,6 +37,9 @@ const groups = (["crew", "food"] as const).map((id) => ({
   <p class="mt-2 flex flex-wrap gap-x-5 gap-y-1">
     <a href={mapsLink([venue.name, venue.street_address, venue.city.name_en])} rel="noopener">
       {t.map}
+    </a>
+    <a href={wazeLink([venue.name, venue.street_address, venue.city.name_en])} rel="noopener">
+      {t.waze}
     </a>
     {venue.website && (
       <a href={venue.website} rel="noopener">
@@ -71,52 +68,7 @@ const groups = (["crew", "food"] as const).map((id) => ({
         <span aria-hidden="true" class="inline-block h-1.5 w-5 bg-spike"></span>
         {t.nearby}
       </h2>
-      {groups.map((group) => (
-        <div class="mt-5">
-          <h3 class="font-semibold">{group.title}</h3>
-          {group.places.length > 0 ? (
-            <ul class="mt-2 border-t border-rule">
-              {group.places.map((place) => (
-                <li class="border-b border-rule py-3">
-                  <div class="flex flex-wrap items-baseline justify-between gap-x-4">
-                    <span class="font-semibold">
-                      {place.website ? (
-                        <a href={place.website} rel="noopener">
-                          {place.name}
-                        </a>
-                      ) : (
-                        place.name
-                      )}
-                    </span>
-                    <span class="text-sm text-muted">
-                      {t.category[place.category]}
-                      {place.distance_m !== null && `, ${distance(place.distance_m)}`}
-                    </span>
-                  </div>
-                  {place.is_sponsored && (
-                    <p class="mt-1 inline-block rounded border border-rule px-1.5 text-xs text-muted">
-                      {t.sponsored}
-                    </p>
-                  )}
-                  {place.address && <p class="mt-1 text-sm">{place.address}</p>}
-                  {place.note && <p class="mt-1 text-sm text-muted">{place.note}</p>}
-                  {place.phone && (
-                    <p class="mt-1 text-sm">
-                      <a href={telLink(place.phone)}>{place.phone}</a>
-                    </p>
-                  )}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p class="mt-2 border-t border-rule pt-2 text-sm text-muted">{group.empty}</p>
-          )}
-          <p class="mt-2 text-sm">
-            {group.invite}{" "}
-            <a href={mailto(PUBLIC_CONTACT_EMAIL, group.subject(venue.name))}>{group.action}</a>
-          </p>
-        </div>
-      ))}
+      <Nearby venueName={venue.name} places={places} />
     </section>
   </div>
 </Base>

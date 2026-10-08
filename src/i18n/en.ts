@@ -41,17 +41,11 @@ export const en = {
       "Everything on BackstageIL comes from venues and the crews who work in them. Write to us and we'll add it.",
     addressLabel: "Email",
     requests: {
-      crewPlace: {
-        title: "Suggest a place for crews",
-        text: "A music store, pharmacy, supermarket or parking near a venue. Listing is free.",
-        subject: "Suggest a place for crews",
-        action: "Suggest a place",
-      },
-      listing: {
-        title: "List your restaurant, café or hotel",
-        text: "Show your business to the crews working at a venue near you. Paid listing; we'll send the details.",
-        subject: "Business listing",
-        action: "Ask about a listing",
+      recommendation: {
+        title: "Recommend a place near a venue",
+        text: "Crew parking, the loading entrance, a Waze tip, a music store, pharmacy or supermarket, a restaurant, café or hotel. Tell us the venue and what you recommend.",
+        subject: "Recommendation near a venue",
+        action: "Send a recommendation",
       },
       photos: {
         title: "Send photos of a hall",
@@ -122,6 +116,7 @@ export const en = {
     description: (name: string, city: string) =>
       `Technical information for ${name}, ${city}: halls, stage sizes and places nearby for crews.`,
     map: "Open in Google Maps",
+    waze: "Open in Waze",
     website: "Venue website",
     halls: "Halls",
     nearby: "Nearby",
@@ -130,16 +125,16 @@ export const en = {
       crew: {
         title: "Crew essentials",
         empty: "No places listed yet.",
-        invite: "Know a place crews need near here?",
-        action: "Suggest it",
-        subject: (venue: string) => `Suggest a place near ${venue}`,
+        invite: "Know where crews can park, or a tip for getting in?",
+        action: "Send a recommendation",
+        subject: (venue: string) => `Crew recommendation for ${venue}`,
       },
       food: {
         title: "Food and stay",
         empty: "No places listed yet.",
         invite: "Own a restaurant, café or hotel near this venue?",
-        action: "Get listed",
-        subject: (venue: string) => `Business listing near ${venue}`,
+        action: "Write to us",
+        subject: (venue: string) => `Business near ${venue}`,
       },
     },
     category: {
@@ -239,6 +234,11 @@ export const en = {
     notes: "Notes",
     known_issues: "Known issues",
   },
+  // Labels of the hall extras the API registers (it sends no label for them)
+  extras: {
+    stage_shape: "Stage shape",
+    stage_extension: "Stage extension",
+  } as Record<string, string>,
   values: {
     yes: "Yes",
     no: "No",

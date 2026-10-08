@@ -3,11 +3,12 @@
 import { PUBLIC_CONTACT_EMAIL } from "astro:env/client";
 
 import Gallery from "../../../../components/Gallery.astro";
+import Nearby from "../../../../components/Nearby.astro";
 import StagePlan from "../../../../components/StagePlan.astro";
 import { en } from "../../../../i18n/en";
 import Base from "../../../../layouts/Base.astro";
 import type { HallDocument } from "../../../../lib/api";
-import { hallSections } from "../../../../lib/hall-sections";
+import { extraLabel, hallSections } from "../../../../lib/hall-sections";
 import { mailto } from "../../../../lib/contact";
 import { api } from "../../../../lib/site-api";
 
@@ -31,10 +32,11 @@ const hall: HallDocument = await api.hall(venueSlug, hallSlug);
 const venue = hall.venue;
 const sections = hallSections(hall);
 const pictures = await api.pictures(venueSlug, hallSlug);
+const places = await api.recommendations(venueSlug);
 const extras = Object.entries((hall.extras ?? {}) as Record<string, ExtraItem>).map(
   ([key, extra]) => ({
     key,
-    label: extra.label ?? key,
+    label: extraLabel(key, extra.label),
     value:
       extra.value === undefined || extra.value === null
         ? null
@@ -77,7 +79,12 @@ const description = `Technical information for ${where} (${venue.city.name_en}):
         class="sticky top-0 z-10 -mx-4 mb-6 border-b border-rule bg-paper/95 px-4 backdrop-blur sm:mx-0 sm:px-0"
       >
         <ul class="flex gap-1 overflow-x-auto py-2 text-sm whitespace-nowrap sm:flex-wrap sm:whitespace-normal">
-          {[{ id: "photos", title: t.photos }, ...sections].map((section) => (
+          {[
+            { id: "photos", title: t.photos },
+            ...sections,
+            ...(extras.length > 0 ? [{ id: "particular", title: t.particular }] : []),
+            { id: "nearby", title: en.venue.nearby },
+          ].map((section) => (
             <li>
               <a
                 href={`#${section.id}`}
@@ -133,8 +140,11 @@ const description = `Technical information for ${where} (${venue.city.name_en}):
       ))}
 
       {extras.length > 0 && (
-        <section id="particular" class="mt-10">
-          <h2 class="font-stencil text-2xl font-bold">{t.particular}</h2>
+        <section id="particular" data-section class="mt-10 scroll-mt-(--index-offset)">
+          <h2 class="font-stencil flex items-center gap-3 text-2xl font-bold">
+            <span aria-hidden="true" class="inline-block h-1.5 w-5 bg-spike" />
+            {t.particular}
+          </h2>
           <dl class="mt-3 border-t border-rule">
             {extras.map((extra) => (
               <div class="border-b border-rule py-2.5" data-key={extra.key}>
@@ -150,6 +160,14 @@ const description = `Technical information for ${where} (${venue.city.name_en}):
           </dl>
         </section>
       )}
+
+      <section id="nearby" data-section class="mt-10 scroll-mt-(--index-offset)">
+        <h2 class="font-stencil flex items-center gap-3 text-2xl font-bold">
+          <span aria-hidden="true" class="inline-block h-1.5 w-5 bg-spike"></span>
+          {en.venue.nearby}
+        </h2>
+        <Nearby venueName={venue.name} places={places} />
+      </section>
 
       <footer class="mt-12 border-t border-rule pt-4 text-sm text-muted">
         {hall.source && (

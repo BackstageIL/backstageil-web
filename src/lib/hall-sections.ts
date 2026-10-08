@@ -193,3 +193,12 @@ export function hallSections(hall: HallDocument): FilledSection[] {
       .filter((row) => row.value !== null || row.note !== null),
   })).filter((section) => section.rows.length > 0);
 }
+
+/** Label of a hall extra: its own, the site's for registered keys, or the key made readable. */
+export function extraLabel(key: string, label?: string | null): string {
+  if (label?.trim()) return label.trim();
+  const known = en.extras[key];
+  if (known) return known;
+  const words = key.replace(/_/g, " ").trim();
+  return words.charAt(0).toUpperCase() + words.slice(1);
+}
