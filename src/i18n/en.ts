@@ -166,7 +166,6 @@ export const en = {
     centreLine: "CL",
     foh: "FOH",
     contents: "On this page",
-    nearby: "Parking, food and places near this venue",
     photos: "Photos",
     noPhotos: "No photos of this hall yet.",
     sendPhotos: "Have photos of this hall?",
@@ -241,6 +240,11 @@ export const en = {
     notes: "Notes",
     known_issues: "Known issues",
   },
+  // Labels of the hall extras the API registers (it sends no label for them)
+  extras: {
+    stage_shape: "Stage shape",
+    stage_extension: "Stage extension",
+  } as Record<string, string>,
   values: {
     yes: "Yes",
     no: "No",

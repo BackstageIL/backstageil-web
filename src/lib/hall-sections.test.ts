@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import type { HallDocument } from "./api";
-import { SECTIONS, everyFieldPlaced, formatValue, hallSections } from "./hall-sections";
+import { SECTIONS, everyFieldPlaced, extraLabel, formatValue, hallSections } from "./hall-sections";
 
 function hall(fields: Partial<HallDocument> = {}): HallDocument {
   return {
@@ -91,5 +91,14 @@ describe("hallSections", () => {
     const fields = SECTIONS.flatMap((s) => s.fields.map(([field]) => field));
     expect(new Set(fields).size).toBe(fields.length);
     expect(everyFieldPlaced).toBe(true);
+  });
+});
+
+describe("extraLabel", () => {
+  it("uses the extra's own label, then the site's, then the readable key", () => {
+    expect(extraLabel("stage_cameras", " Stage cameras ")).toBe("Stage cameras");
+    expect(extraLabel("stage_shape", null)).toBe("Stage shape");
+    expect(extraLabel("stage_extension")).toBe("Stage extension");
+    expect(extraLabel("rain_cover_needed", "")).toBe("Rain cover needed");
   });
 });
