@@ -1,0 +1,29 @@
+---
+// Placeholder (BSIL-29 PR 1): proves the build reads the API. The designed site comes in PR 2.
+import "../styles/global.css";
+import { api } from "../lib/site-api";
+
+const venues = await api.listVenues();
+---
+
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>BackstageIL</title>
+  </head>
+  <body class="mx-auto max-w-2xl p-6 font-sans">
+    <h1 class="text-2xl font-bold">BackstageIL</h1>
+    <p class="mt-2">Technical information about performance venues in Israel. Coming soon.</p>
+    <p class="mt-6 text-sm">{venues.length} published venues:</p>
+    <ul class="mt-2 list-disc ps-6 text-sm">
+      {venues.map((venue) => (
+        <li>
+          {venue.name}, {venue.city.name_en}
+        </li>
+      ))}
+    </ul>
+  </body>
+</html>
