@@ -182,6 +182,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/site/rebuild": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Rebuild the website now
+         * @description The website is also rebuilt automatically after every successful admin change; use this to force a rebuild. The new site is live about 1-2 minutes later.
+         */
+        post: operations["rebuild_site_api_v1_admin_site_rebuild_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/venues/import": {
         parameters: {
             query?: never;
@@ -518,6 +538,8 @@ export interface components {
             slug: string;
             /** Name */
             name: string;
+            /** Name He */
+            name_he: string | null;
             venue: components["schemas"]["VenueRef"];
             /** Field Notes */
             field_notes: {
@@ -540,6 +562,8 @@ export interface components {
             slug: string;
             /** Name */
             name: string;
+            /** Name He */
+            name_he: string | null;
             /** Capacity Seated */
             capacity_seated: number | null;
             /** Stage Width M */
@@ -620,6 +644,8 @@ export interface components {
             slug: string;
             /** Name */
             name: string;
+            /** Name He */
+            name_he: string | null;
             venue_type: components["schemas"]["VenueType"];
             /** Street Address */
             street_address: string | null;
@@ -648,6 +674,8 @@ export interface components {
             slug: string;
             /** Name */
             name: string;
+            /** Name He */
+            name_he: string | null;
             venue_type: components["schemas"]["VenueType"];
             /** Street Address */
             street_address: string | null;
@@ -673,6 +701,8 @@ export interface components {
             slug: string;
             /** Name En */
             name_en: string;
+            /** Name He */
+            name_he: string;
             district: components["schemas"]["District"] | null;
         };
         /** CityWithCount */
@@ -681,6 +711,8 @@ export interface components {
             slug: string;
             /** Name En */
             name_en: string;
+            /** Name He */
+            name_he: string;
             district: components["schemas"]["District"] | null;
             /** Venue Count */
             venue_count: number;
@@ -800,6 +832,8 @@ export interface components {
             slug: string;
             /** Name */
             name: string;
+            /** Name He */
+            name_he: string | null;
             venue: components["schemas"]["VenueRef"];
             /** Field Notes */
             field_notes: {
@@ -921,6 +955,8 @@ export interface components {
             slug: string;
             /** Name */
             name: string;
+            /** Name He */
+            name_he?: string | null;
             /** @default {} */
             extras: components["schemas"]["HallExtras"];
             /** @default {} */
@@ -1025,6 +1061,8 @@ export interface components {
             known_issues?: string | null;
             /** Name */
             name?: string | null;
+            /** Name He */
+            name_he?: string | null;
             field_notes?: components["schemas"]["HallFieldNotes"] | null;
             extras?: components["schemas"]["HallExtras"] | null;
             /** Source */
@@ -1038,6 +1076,8 @@ export interface components {
             slug: string;
             /** Name */
             name: string;
+            /** Name He */
+            name_he: string | null;
             /** Capacity Seated */
             capacity_seated: number | null;
             /** Stage Width M */
@@ -1197,6 +1237,15 @@ export interface components {
             /** Is Active */
             is_active?: boolean | null;
         };
+        /** SiteRebuildState */
+        SiteRebuildState: {
+            /**
+             * Status
+             * @default triggered
+             * @constant
+             */
+            status: "triggered";
+        };
         /**
          * StageFloor
          * @enum {string}
@@ -1221,6 +1270,8 @@ export interface components {
             slug: string;
             /** Name */
             name: string;
+            /** Name He */
+            name_he: string | null;
             venue_type: components["schemas"]["VenueType"];
             /** Street Address */
             street_address: string | null;
@@ -1236,6 +1287,8 @@ export interface components {
             slug: string;
             /** Name */
             name: string;
+            /** Name He */
+            name_he?: string | null;
             /** City Code */
             city_code: number;
             /** Street Address */
@@ -1269,6 +1322,8 @@ export interface components {
         VenuePatch: {
             /** Name */
             name?: string | null;
+            /** Name He */
+            name_he?: string | null;
             /** Street Address */
             street_address?: string | null;
             venue_type?: components["schemas"]["VenueType"] | null;
@@ -1283,6 +1338,8 @@ export interface components {
             slug: string;
             /** Name */
             name: string;
+            /** Name He */
+            name_he: string | null;
             /** Street Address */
             street_address: string | null;
             city: components["schemas"]["CityRef"];
@@ -1293,6 +1350,8 @@ export interface components {
             slug: string;
             /** Name */
             name: string;
+            /** Name He */
+            name_he: string | null;
             venue_type: components["schemas"]["VenueType"];
             /** Street Address */
             street_address: string | null;
@@ -1559,6 +1618,38 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HealthResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    rebuild_site_api_v1_admin_site_rebuild_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Admin API key */
+                "x-api-key"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SiteRebuildState"];
                 };
             };
             /** @description Validation Error */

@@ -1,16 +1,25 @@
 ---
-import { en } from "../i18n/en";
+/** One 404 page for both languages (the host serves it for every unknown URL). */
+import { strings } from "../i18n";
 import Base from "../layouts/Base.astro";
 
-const t = en.notFound;
+const en = strings("en").notFound;
+const he = strings("he").notFound;
 ---
 
-<Base title={t.title} description={t.description} noindex>
+<Base title={en.title} description={en.description} locale="en" noindex>
   <div class="max-w-2xl">
-    <h1 class="font-stencil text-4xl font-bold sm:text-5xl">{t.title}</h1>
-    <p class="mt-3 text-lg">{t.text}</p>
-    <p class="mt-6">
-      <a href="/">{t.back}</a>
+    <h1 class="font-stencil text-4xl font-bold sm:text-5xl">{en.title}</h1>
+    <p class="mt-3 text-lg">{en.text}</p>
+    <p class="mt-4">
+      <a href="/">{en.back}</a>
+    </p>
+  </div>
+  <div class="mt-10 max-w-2xl border-t border-rule pt-6" lang="he" dir="rtl">
+    <h2 class="font-stencil text-3xl font-bold">{he.title}</h2>
+    <p class="mt-3 text-lg">{he.text}</p>
+    <p class="mt-4">
+      <a href="/he/">{he.back}</a>
     </p>
   </div>
 </Base>

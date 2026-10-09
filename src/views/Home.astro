@@ -1,0 +1,30 @@
+---
+/** Home: find a venue by city, then venue; every hall with its stage size and outline. */
+import VenueBrowser from "../components/VenueBrowser";
+import { strings, type Locale } from "../i18n";
+import Base from "../layouts/Base.astro";
+import { api } from "../lib/site-api";
+import { toListItems } from "../lib/venue-list";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = strings(locale);
+const summaries = await api.listVenues();
+const venues = toListItems(
+  await Promise.all(summaries.map((venue) => api.venue(venue.slug))),
+  locale,
+);
+---
+
+<Base title={t.site.name} description={t.site.tagline} locale={locale}>
+  <h1 class="font-stencil max-w-3xl text-4xl leading-tight font-bold sm:text-6xl">
+    {t.home.title}
+  </h1>
+  <p class="mt-3 max-w-2xl text-lg text-muted">{t.home.intro}</p>
+  <div class="max-w-3xl">
+    <VenueBrowser client:load venues={venues} locale={locale} />
+  </div>
+</Base>

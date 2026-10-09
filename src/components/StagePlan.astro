@@ -3,23 +3,26 @@
  * The hall's stage, drawn to scale from its measurements: stage floor with a 1 m grid,
  * proscenium opening, first pipe, centre-line spike mark and the FOH position in the house.
  */
-import { en } from "../i18n/en";
+import { strings, type Locale } from "../i18n";
 import type { HallDocument } from "../lib/api";
-import { gridLines, meters, stagePlan } from "../lib/stage-plan";
+import { gridLines, meters as metersIn, stagePlan } from "../lib/stage-plan";
 
 interface Props {
   hall: HallDocument;
+  locale: Locale;
 }
 
 const plan = stagePlan(Astro.props.hall);
-const t = en.hall;
+const dictionary = strings(Astro.props.locale);
+const t = dictionary.hall;
+const meters = (value: number) => metersIn(value, dictionary.units.meters);
 
 const description = plan
   ? [
-      `Stage ${meters(plan.width)} wide and ${meters(plan.depth)} deep`,
-      plan.proscenium && `proscenium opening ${meters(plan.proscenium)}`,
-      plan.firstPipe && `first pipe ${meters(plan.firstPipe)} upstage of the proscenium`,
-      plan.foh && `FOH ${meters(plan.foh)} from the stage`,
+      t.planStage(meters(plan.width), meters(plan.depth)),
+      plan.proscenium && t.planProscenium(meters(plan.proscenium)),
+      plan.firstPipe && t.planFirstPipe(meters(plan.firstPipe)),
+      plan.foh && t.planFoh(meters(plan.foh)),
     ]
       .filter(Boolean)
       .join(", ")
@@ -185,6 +188,8 @@ const description = plan
 
 <style>
   .stage-plan svg {
+    /* A physical drawing: never mirrored on right-to-left pages */
+    direction: ltr;
     display: block;
     width: 100%;
     height: auto;

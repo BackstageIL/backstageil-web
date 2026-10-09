@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "@fontsource-variable/archivo/wdth.css";
 @import "@fontsource-variable/atkinson-hyperlegible-next";
+/* Hebrew letters (the Latin fonts have none); numbers keep the Latin fonts' figures */
+@import "@fontsource-variable/heebo";
 
 /*
  * Tokens. Light is a printed spec sheet in navy ink; dark is the blue of backstage running
@@ -53,8 +55,8 @@
   --color-rule: var(--rule);
   --color-cue: var(--cue);
   --color-spike: var(--spike);
-  --font-display: "Archivo Variable", "Arial Narrow", sans-serif;
-  --font-sans: "Atkinson Hyperlegible Next Variable", system-ui, sans-serif;
+  --font-display: "Archivo Variable", "Heebo Variable", "Arial Narrow", sans-serif;
+  --font-sans: "Atkinson Hyperlegible Next Variable", "Heebo Variable", system-ui, sans-serif;
 }
 
 @layer base {

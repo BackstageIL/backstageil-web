@@ -2,7 +2,7 @@
  * One hall in a list: its stage outline at the shared scale, name, stage size and seats.
  * Used by the home list (inside the dropdown island) and as static HTML on venue pages.
  */
-import { en } from "../i18n/en";
+import { localePath, strings, type Locale } from "../i18n";
 import { meters } from "../lib/stage-plan";
 import type { HallListItem } from "../lib/venue-list";
 
@@ -10,26 +10,28 @@ import type { HallListItem } from "../lib/venue-list";
 export const OUTLINE_WIDTH = 112;
 export const OUTLINE_HEIGHT = 84;
 
-const t = en.home;
-
 interface Props {
   venue: string;
   hall: HallListItem;
   scale: number;
+  locale: Locale;
 }
 
-export default function HallRow({ venue, hall, scale }: Props) {
+export default function HallRow({ venue, hall, scale, locale }: Props) {
+  const dictionary = strings(locale);
+  const t = dictionary.home;
+  const unit = dictionary.units.meters;
   const facts = [
-    hall.width && hall.depth && t.stage(meters(hall.width), meters(hall.depth)),
+    hall.width && hall.depth && t.stage(meters(hall.width, unit), meters(hall.depth, unit)),
     hall.seats && t.seats(hall.seats),
   ].filter(Boolean);
 
   return (
     <a
-      href={`/venues/${venue}/halls/${hall.slug}/`}
+      href={localePath(locale, `/venues/${venue}/halls/${hall.slug}/`)}
       className="flex items-center gap-4 rounded p-1 text-ink no-underline hover:bg-sheet"
     >
-      <StageOutline width={hall.width} depth={hall.depth} scale={scale} />
+      <StageOutline width={hall.width} depth={hall.depth} scale={scale} label={t.outline} />
       <span>
         <span className="block font-semibold">{hall.name}</span>
         {facts.length > 0 && (
@@ -45,10 +47,12 @@ function StageOutline({
   width,
   depth,
   scale,
+  label,
 }: {
   width: number | null;
   depth: number | null;
   scale: number;
+  label: string;
 }) {
   const boxWidth = OUTLINE_WIDTH;
   const boxHeight = OUTLINE_HEIGHT;
@@ -72,7 +76,7 @@ function StageOutline({
       viewBox={`0 0 ${boxWidth} ${boxHeight}`}
       className="shrink-0"
       role="img"
-      aria-label={t.outline}
+      aria-label={label}
     >
       <rect
         x={x}

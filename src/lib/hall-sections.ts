@@ -3,12 +3,13 @@
  * its value is formatted. Every technical field of the API's HallDocument must be placed here;
  * a new API column fails the type check until it is.
  */
-import { en } from "../i18n/en";
+import { en, type Strings } from "../i18n/en";
 import type { HallDocument } from "./api";
 
 export type Kind = "count" | "meters" | "kg" | "amps" | "bool" | "allowed" | "enum" | "text";
 
-type Meta = "slug" | "name" | "venue" | "field_notes" | "extras" | "source" | "last_verified_at";
+type Meta =
+  "slug" | "name" | "name_he" | "venue" | "field_notes" | "extras" | "source" | "last_verified_at";
 export type TechnicalField = Exclude<keyof HallDocument, Meta>;
 
 export interface Section {
@@ -127,28 +128,32 @@ type Placed = (typeof SECTIONS)[number]["fields"][number][0];
 type Unplaced = Exclude<TechnicalField, Placed>;
 export const everyFieldPlaced: [Unplaced] extends [never] ? true : Unplaced = true;
 
-const number = new Intl.NumberFormat("en", { maximumFractionDigits: 2 });
-
 /** The value as shown on the page, or null when the venue hasn't given it. */
-export function formatValue(field: TechnicalField, kind: Kind, value: unknown): string | null {
+export function formatValue(
+  field: TechnicalField,
+  kind: Kind,
+  value: unknown,
+  t: Strings = en,
+): string | null {
   if (value === null || value === undefined) return null;
+  const number = new Intl.NumberFormat(t.locale.intl, { maximumFractionDigits: 2 });
   switch (kind) {
     case "count":
       return number.format(value as number);
     case "meters":
-      return `${number.format(value as number)} m`;
+      return `${number.format(value as number)} ${t.units.meters}`;
     case "kg":
-      return `${number.format(value as number)} kg`;
+      return `${number.format(value as number)} ${t.units.kg}`;
     case "amps": {
       const circuits = value as number[];
-      return circuits.length ? circuits.map((amps) => `${amps} A`).join(", ") : null;
+      return circuits.length ? circuits.map((amps) => `${amps} ${t.units.amps}`).join(", ") : null;
     }
     case "bool":
-      return value ? en.values.yes : en.values.no;
+      return value ? t.values.yes : t.values.no;
     case "allowed":
-      return value ? en.values.allowed : en.values.notAllowed;
+      return value ? t.values.allowed : t.values.notAllowed;
     case "enum": {
-      const labels = en.values[field as "stage_floor" | "pipe_type"] as Record<string, string>;
+      const labels = t.values[field as "stage_floor" | "pipe_type"] as Record<string, string>;
       return labels[value as string] ?? String(value);
     }
     case "text": {
@@ -174,18 +179,18 @@ export interface FilledSection {
 }
 
 /** Sections with the rows the venue has filled in (a value or a note); empty sections are left out. */
-export function hallSections(hall: HallDocument): FilledSection[] {
+export function hallSections(hall: HallDocument, t: Strings = en): FilledSection[] {
   const notes = hall.field_notes ?? {};
   return SECTIONS.map((section) => ({
     id: section.id,
-    title: en.sections[section.id],
+    title: t.sections[section.id],
     rows: section.fields
       .map(([field, kind]): Row => {
         const note = notes[field]?.trim() || null;
         return {
           field,
-          label: en.fields[field],
-          value: formatValue(field, kind, hall[field]),
+          label: t.fields[field],
+          value: formatValue(field, kind, hall[field], t),
           isText: kind === "text",
           note,
         };
@@ -195,9 +200,9 @@ export function hallSections(hall: HallDocument): FilledSection[] {
 }
 
 /** Label of a hall extra: its own, the site's for registered keys, or the key made readable. */
-export function extraLabel(key: string, label?: string | null): string {
+export function extraLabel(key: string, label?: string | null, t: Strings = en): string {
   if (label?.trim()) return label.trim();
-  const known = en.extras[key];
+  const known = t.extras[key];
   if (known) return known;
   const words = key.replace(/_/g, " ").trim();
   return words.charAt(0).toUpperCase() + words.slice(1);

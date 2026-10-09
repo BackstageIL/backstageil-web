@@ -1,74 +1,12 @@
 ---
-/** A venue: address and map, its halls (same outlines as the home list), and places nearby. */
+import { venuePaths } from "../../../lib/paths";
+import Venue from "../../../views/Venue.astro";
 
-import HallRow, { OUTLINE_HEIGHT, OUTLINE_WIDTH } from "../../../components/HallRow";
-import Nearby from "../../../components/Nearby.astro";
-import { en } from "../../../i18n/en";
-import Base from "../../../layouts/Base.astro";
-import { mapsLink, wazeLink } from "../../../lib/nearby";
-import { api } from "../../../lib/site-api";
-import { outlineScale, toListItems } from "../../../lib/venue-list";
-
-export async function getStaticPaths() {
-  const venues = await api.listVenues();
-  return venues.map((venue) => ({ params: { venue: venue.slug } }));
+export function getStaticPaths() {
+  return venuePaths();
 }
 
-const { venue: slug } = Astro.params as { venue: string };
-const all = toListItems(
-  await Promise.all((await api.listVenues()).map((venue) => api.venue(venue.slug))),
-);
-const scale = outlineScale(all, OUTLINE_WIDTH, OUTLINE_HEIGHT); // same scale as the home list
-const venue = await api.venue(slug);
-const item = all.find((v) => v.slug === slug);
-const places = await api.recommendations(slug);
-const t = en.venue;
+const { venue } = Astro.params as { venue: string };
 ---
 
-<Base title={venue.name} description={t.description(venue.name, venue.city.name_en)}>
-  <p class="text-sm text-muted">{en.venueType[venue.venue_type]}</p>
-  <h1 class="font-stencil mt-1 max-w-4xl text-4xl leading-tight font-bold sm:text-5xl">
-    {venue.name}
-  </h1>
-  <p class="mt-2">
-    {[venue.street_address, venue.city.name_en].filter(Boolean).join(", ")}
-    {venue.city.district && <span class="text-muted">, {en.district[venue.city.district]}</span>}
-  </p>
-  <p class="mt-2 flex flex-wrap gap-x-5 gap-y-1">
-    <a href={mapsLink([venue.name, venue.street_address, venue.city.name_en])} rel="noopener">
-      {t.map}
-    </a>
-    <a href={wazeLink([venue.name, venue.street_address, venue.city.name_en])} rel="noopener">
-      {t.waze}
-    </a>
-    {venue.website && (
-      <a href={venue.website} rel="noopener">
-        {t.website}
-      </a>
-    )}
-  </p>
-
-  <div class="mt-10 grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-    <section>
-      <h2 class="font-stencil flex items-center gap-3 text-2xl font-bold">
-        <span aria-hidden="true" class="inline-block h-1.5 w-5 bg-spike"></span>
-        {t.halls}
-      </h2>
-      <ul class="mt-3 space-y-2 border-t border-rule pt-3">
-        {item?.halls.map((hall) => (
-          <li>
-            <HallRow venue={slug} hall={hall} scale={scale} />
-          </li>
-        ))}
-      </ul>
-    </section>
-
-    <section aria-labelledby="nearby">
-      <h2 id="nearby" class="font-stencil flex items-center gap-3 text-2xl font-bold">
-        <span aria-hidden="true" class="inline-block h-1.5 w-5 bg-spike"></span>
-        {t.nearby}
-      </h2>
-      <Nearby venueName={venue.name} places={places} />
-    </section>
-  </div>
-</Base>
+<Venue locale="en" slug={venue} />

@@ -1,0 +1,12 @@
+---
+import { hallPaths } from "../../../../../lib/paths";
+import Hall from "../../../../../views/Hall.astro";
+
+export function getStaticPaths() {
+  return hallPaths();
+}
+
+const { venue, hall } = Astro.params as { venue: string; hall: string };
+---
+
+<Hall locale="he" venueSlug={venue} hallSlug={hall} />

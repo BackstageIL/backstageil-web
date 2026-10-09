@@ -26,10 +26,10 @@ export function groupNearby(places: Recommendation[]): Record<NearbyGroupId, Rec
   return groups;
 }
 
-/** "350 m away", "1.2 km away" */
-export function distance(meters: number): string {
-  if (meters < 1000) return `${Math.round(meters / 10) * 10 || meters} m away`;
-  return `${Number((meters / 1000).toFixed(1))} km away`;
+/** A rounded distance in meters (to 10 m) or kilometers (to 0.1 km), worded by the dictionary. */
+export function distanceParts(meters: number): { value: number; unit: "m" | "km" } {
+  if (meters < 1000) return { value: Math.round(meters / 10) * 10 || meters, unit: "m" };
+  return { value: Number((meters / 1000).toFixed(1)), unit: "km" };
 }
 
 /** A tel: link from a business phone as written ("+972 4-123 4567" → "tel:+97241234567"). */

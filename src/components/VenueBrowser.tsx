@@ -5,17 +5,18 @@
  */
 import { useEffect, useMemo, useState } from "react";
 
-import { en } from "../i18n/en";
+import { localePath, strings, type Locale } from "../i18n";
 import { cityOptions, filterVenues, outlineScale, type VenueListItem } from "../lib/venue-list";
 import HallRow, { OUTLINE_HEIGHT, OUTLINE_WIDTH } from "./HallRow";
 
-const t = en.home;
-
 interface Props {
   venues: VenueListItem[];
+  locale: Locale;
 }
 
-export default function VenueBrowser({ venues }: Props) {
+export default function VenueBrowser({ venues, locale }: Props) {
+  const dictionary = strings(locale);
+  const t = dictionary.home;
   const [{ city, venue }, setChoice] = useState({ city: "", venue: "" });
 
   // The page is built without a URL, so a shared choice (?city=&venue=) is restored once it
@@ -35,7 +36,7 @@ export default function VenueBrowser({ venues }: Props) {
     history.replaceState(null, "", query ? `?${query}` : location.pathname);
   };
 
-  const cities = useMemo(() => cityOptions(venues), [venues]);
+  const cities = useMemo(() => cityOptions(venues, locale), [venues, locale]);
   const scale = useMemo(() => outlineScale(venues, OUTLINE_WIDTH, OUTLINE_HEIGHT), [venues]);
   const { venueOptions, shown } = filterVenues(venues, city, venue);
 
@@ -73,21 +74,21 @@ export default function VenueBrowser({ venues }: Props) {
           <li key={item.slug} className="border-b border-rule py-4">
             <div className="flex flex-wrap items-baseline justify-between gap-x-4">
               <a
-                href={`/venues/${item.slug}/`}
+                href={localePath(locale, `/venues/${item.slug}/`)}
                 className="font-stencil text-2xl font-bold text-ink no-underline hover:underline"
               >
                 {item.name}
               </a>
               <span className="text-sm text-muted">
                 {item.city.name}
-                {item.district && `, ${en.district[item.district]}`}
+                {item.district && `, ${dictionary.district[item.district]}`}
               </span>
             </div>
-            <p className="text-sm text-muted">{en.venueType[item.type]}</p>
+            <p className="text-sm text-muted">{dictionary.venueType[item.type]}</p>
             <ul className="mt-3 space-y-2">
               {item.halls.map((hall) => (
                 <li key={hall.slug}>
-                  <HallRow venue={item.slug} hall={hall} scale={scale} />
+                  <HallRow venue={item.slug} hall={hall} scale={scale} locale={locale} />
                 </li>
               ))}
             </ul>
