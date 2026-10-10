@@ -14,8 +14,16 @@ export function strings(locale: Locale): Strings {
   return DICTIONARIES[locale];
 }
 
-export function dirOf(locale: Locale): "ltr" | "rtl" {
-  return locale === "he" ? "rtl" : "ltr";
+/** The language menu: every language, its own name, the same page in it, and which is shown. */
+export function languageOptions(current: Locale, path: string) {
+  const page = pathWithoutLocale(path);
+  return LOCALES.map((locale) => ({
+    locale,
+    name: strings(current).locale.names[locale],
+    code: strings(current).locale.codes[locale],
+    href: localePath(locale, page),
+    current: locale === current,
+  }));
 }
 
 /** The URL of a site path in a language: "/venues/x/" → "/he/venues/x/" for Hebrew. */
@@ -28,11 +36,6 @@ export function localePath(locale: Locale, path: string): string {
 export function pathWithoutLocale(path: string): string {
   if (path === "/he" || path === "/he/") return "/";
   return path.startsWith("/he/") ? path.slice(3) : path;
-}
-
-/** The same page in the other language. */
-export function otherLanguagePath(locale: Locale, path: string): string {
-  return localePath(locale === "en" ? "he" : "en", pathWithoutLocale(path));
 }
 
 /** Prefer the Hebrew name on Hebrew pages when there is one. */

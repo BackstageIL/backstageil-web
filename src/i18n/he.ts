@@ -7,9 +7,9 @@ import type { Strings } from "./en";
 export const he: Strings = {
   locale: {
     intl: "he-IL",
-    switchLabel: "English",
-    switchTitle: "English version",
-    switchLang: "en",
+    language: "שפה",
+    names: { en: "English", he: "עברית" },
+    codes: { en: "EN", he: "HE" },
   },
   units: {
     meters: "מ׳",
@@ -122,7 +122,7 @@ export const he: Strings = {
   venue: {
     description: (name: string, city: string) =>
       `מידע טכני על ${name}, ${city}: אולמות, מידות במה ומקומות קרובים לצוותים.`,
-    map: "פתיחה ב-Google Maps",
+    map: "Google Maps",
     waze: "ניווט ב-Waze",
     website: "אתר המקום",
     halls: "אולמות",

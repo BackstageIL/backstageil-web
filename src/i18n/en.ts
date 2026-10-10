@@ -10,10 +10,11 @@ export const en = {
   locale: {
     // Formatting of numbers and dates
     intl: "en-GB",
-    // The header button that switches to the other language
-    switchLabel: "עברית",
-    switchTitle: "גרסה בעברית",
-    switchLang: "he",
+    // The header language menu; each language is listed by its own name
+    language: "Language",
+    names: { en: "English", he: "עברית" },
+    // Short codes on the menu button (ISO 639-1)
+    codes: { en: "EN", he: "HE" },
   },
   units: {
     meters: "m",
@@ -128,8 +129,8 @@ export const en = {
   venue: {
     description: (name: string, city: string) =>
       `Technical information for ${name}, ${city}: halls, stage sizes and places nearby for crews.`,
-    map: "Open in Google Maps",
-    waze: "Open in Waze",
+    map: "Google Maps",
+    waze: "Navigate with Waze",
     website: "Venue website",
     halls: "Halls",
     nearby: "Nearby",

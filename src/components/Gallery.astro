@@ -93,7 +93,7 @@ const items = pictures.map((picture, index) => {
 </style>
 
 <script>
-  import { dirOf, strings, type Locale } from "../i18n";
+  import { strings, type Locale } from "../i18n";
 
   const gallery = document.querySelector<HTMLElement>("[data-gallery]");
   const locale: Locale = gallery?.dataset.locale === "he" ? "he" : "en";
@@ -134,11 +134,8 @@ const items = pictures.map((picture, index) => {
       if (event.target === viewer) viewer.close();
     });
     viewer.addEventListener("keydown", (event) => {
-      // Arrows follow the reading direction: in Hebrew, left is "next"
-      const forward = dirOf(locale) === "rtl" ? "ArrowLeft" : "ArrowRight";
-      const back = forward === "ArrowLeft" ? "ArrowRight" : "ArrowLeft";
-      if (event.key === back) show(current - 1);
-      if (event.key === forward) show(current + 1);
+      if (event.key === "ArrowLeft") show(current - 1);
+      if (event.key === "ArrowRight") show(current + 1);
     });
     // Swipe left/right on touch screens
     let startX: number | null = null;
@@ -147,9 +144,7 @@ const items = pictures.map((picture, index) => {
       if (startX === null) return;
       const moved = event.clientX - startX;
       startX = null;
-      // Swiping toward the reading start shows the next photo (left in English, right in Hebrew)
-      const towardNext = dirOf(locale) === "rtl" ? moved > 0 : moved < 0;
-      if (Math.abs(moved) > 50) show(current + (towardNext ? 1 : -1));
+      if (Math.abs(moved) > 50) show(current + (moved < 0 ? 1 : -1));
     });
   }
 </script>

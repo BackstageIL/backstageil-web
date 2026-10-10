@@ -1,14 +1,8 @@
 ---
 import "../styles/global.css";
+import LanguageMenu from "../components/LanguageMenu.astro";
 import ThemeToggle from "../components/ThemeToggle.astro";
-import {
-  dirOf,
-  localePath,
-  otherLanguagePath,
-  pathWithoutLocale,
-  strings,
-  type Locale,
-} from "../i18n";
+import { localePath, pathWithoutLocale, strings, type Locale } from "../i18n";
 
 interface Props {
   title: string;
@@ -35,7 +29,8 @@ const nav = [
 ].map((item) => ({ href: localePath(locale, item.path), label: item.label }));
 ---
 
-<html lang={locale} dir={dirOf(locale)}>
+<!-- Every language keeps the same layout; Hebrew text reads right-to-left inside its block -->
+<html lang={locale} dir="ltr">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -89,15 +84,7 @@ const nav = [
           ))}
         </nav>
         <div class="ms-auto flex items-center gap-2 sm:ms-0">
-          <a
-            href={otherLanguagePath(locale, path)}
-            lang={t.locale.switchLang}
-            hreflang={t.locale.switchLang}
-            title={t.locale.switchTitle}
-            class="rounded-full border border-rule px-3 py-1.5 text-sm text-ink no-underline hover:bg-sheet"
-          >
-            {t.locale.switchLabel}
-          </a>
+          <LanguageMenu locale={locale} />
           <ThemeToggle locale={locale} />
         </div>
       </div>

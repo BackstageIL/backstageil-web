@@ -1,10 +1,10 @@
 ---
 /** A venue: address and map, its halls (same outlines as the home list), and places nearby. */
 import HallRow, { OUTLINE_HEIGHT, OUTLINE_WIDTH } from "../components/HallRow";
+import NavigateButton from "../components/NavigateButton.astro";
 import Nearby from "../components/Nearby.astro";
 import { cityName, nameIn, strings, type Locale } from "../i18n";
 import Base from "../layouts/Base.astro";
-import { mapsLink, wazeLink } from "../lib/nearby";
 import { api } from "../lib/site-api";
 import { outlineScale, toListItems } from "../lib/venue-list";
 
@@ -39,19 +39,15 @@ const where = [name, venue.street_address, city];
       <span class="text-muted">, {dictionary.district[venue.city.district]}</span>
     )}
   </p>
-  <p class="mt-2 flex flex-wrap gap-x-5 gap-y-1">
-    <a href={mapsLink(where)} rel="noopener">
-      {t.map}
-    </a>
-    <a href={wazeLink(where)} rel="noopener">
-      {t.waze}
-    </a>
-    {venue.website && (
-      <a href={venue.website} rel="noopener">
-        {t.website}
-      </a>
-    )}
-  </p>
+  <div class="mt-4">
+    <NavigateButton locale={locale} where={where}>
+      {venue.website && (
+        <a href={venue.website} rel="noopener" class="text-sm">
+          {t.website}
+        </a>
+      )}
+    </NavigateButton>
+  </div>
 
   <div class="mt-10 grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
     <section>

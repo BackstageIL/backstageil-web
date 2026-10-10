@@ -98,3 +98,16 @@
   font-stretch: 75%;
   font-variant-numeric: tabular-nums;
 }
+
+/*
+ * Hebrew pages keep the English layout: nothing mirrors and every block starts on the left,
+ * values stay on the right. Each line of text still reads in its own direction, so Hebrew
+ * sentences and their punctuation come out right. (Unlayered, so it wins over utilities.)
+ */
+:root:lang(he) :is(h1, h2, h3, p, dt, dd, li, label, figcaption, summary, option) {
+  unicode-bidi: plaintext;
+  text-align: left;
+}
+:root:lang(he) :is(h1, h2, h3, p, dt, dd, li, label, figcaption, summary, option).text-end {
+  text-align: right;
+}

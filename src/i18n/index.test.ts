@@ -3,15 +3,7 @@ import { describe, expect, it } from "vitest";
 import type { VenueDetail } from "../lib/api";
 import { formatValue } from "../lib/hall-sections";
 import { toListItems } from "../lib/venue-list";
-import {
-  cityName,
-  dirOf,
-  localePath,
-  nameIn,
-  otherLanguagePath,
-  pathWithoutLocale,
-  strings,
-} from ".";
+import { cityName, languageOptions, localePath, nameIn, pathWithoutLocale, strings } from ".";
 
 /** Every key path of a dictionary, with the kind of value it holds. */
 function shape(value: unknown, path = ""): string[] {
@@ -28,9 +20,9 @@ describe("dictionaries", () => {
     expect(shape(strings("he")).sort()).toEqual(shape(strings("en")).sort());
   });
 
-  it("switch to the other language", () => {
-    expect(strings("en").locale.switchLang).toBe("he");
-    expect(strings("he").locale.switchLang).toBe("en");
+  it("name each language in its own language", () => {
+    expect(strings("en").locale.names).toEqual({ en: "English", he: "עברית" });
+    expect(strings("he").locale.names).toEqual(strings("en").locale.names);
   });
 });
 
@@ -54,15 +46,15 @@ describe("paths", () => {
     expect(pathWithoutLocale(path)).toBe(expected);
   });
 
-  it("links each page to its other-language version", () => {
-    expect(otherLanguagePath("en", "/venues/x/halls/main/")).toBe("/he/venues/x/halls/main/");
-    expect(otherLanguagePath("he", "/he/venues/x/halls/main/")).toBe("/venues/x/halls/main/");
-    expect(otherLanguagePath("he", "/he/")).toBe("/");
-  });
-
-  it("sets the reading direction", () => {
-    expect(dirOf("en")).toBe("ltr");
-    expect(dirOf("he")).toBe("rtl");
+  it("lists every language with the same page in it", () => {
+    expect(languageOptions("he", "/he/venues/x/")).toEqual([
+      { locale: "en", name: "English", code: "EN", href: "/venues/x/", current: false },
+      { locale: "he", name: "עברית", code: "HE", href: "/he/venues/x/", current: true },
+    ]);
+    expect(languageOptions("en", "/").map((o) => [o.href, o.current])).toEqual([
+      ["/", true],
+      ["/he/", false],
+    ]);
   });
 });
 
