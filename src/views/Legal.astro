@@ -1,0 +1,44 @@
+---
+import { PUBLIC_CONTACT_EMAIL } from "astro:env/client";
+import { strings, type Locale } from "../i18n";
+import Base from "../layouts/Base.astro";
+
+export type LegalPage = "terms" | "privacy" | "accessibility";
+
+interface Props {
+  locale: Locale;
+  page: LegalPage;
+}
+
+const { locale, page } = Astro.props;
+const legal = strings(locale).legal;
+const t = legal[page];
+// "{email}" in a paragraph is shown as a link to the contact address
+const parts = (paragraph: string) => paragraph.split("{email}");
+---
+
+<Base title={t.title} description={t.description} locale={locale}>
+  <article class="max-w-2xl">
+    <h1 class="font-stencil text-4xl font-bold sm:text-5xl">{t.title}</h1>
+    <p class="mt-2 text-sm text-muted">{legal.updated}</p>
+    {t.sections.map((section) => (
+      <section class="mt-8">
+        <h2 class="text-xl font-bold">{section.heading}</h2>
+        {section.paragraphs.map((paragraph) => (
+          <p class="mt-3 leading-relaxed">
+            {parts(paragraph).map((text, i) => (
+              <>
+                {i > 0 && (
+                  <a href={`mailto:${PUBLIC_CONTACT_EMAIL}`} dir="ltr">
+                    {PUBLIC_CONTACT_EMAIL}
+                  </a>
+                )}
+                {text}
+              </>
+            ))}
+          </p>
+        ))}
+      </section>
+    ))}
+  </article>
+</Base>

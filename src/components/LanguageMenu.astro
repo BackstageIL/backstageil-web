@@ -15,10 +15,7 @@ const options = languageOptions(locale, Astro.url.pathname);
 ---
 
 <details class="relative" data-language-menu>
-  <summary
-    aria-label={`${t.language}: ${t.names[locale]}`}
-    class="flex cursor-pointer list-none items-center gap-1.5 rounded-full border border-rule px-3 py-1.5 text-sm text-ink hover:bg-sheet [&::-webkit-details-marker]:hidden"
-  >
+  <summary class="flex cursor-pointer list-none items-center gap-1.5 rounded-full border border-rule px-3 py-1.5 text-sm text-ink hover:bg-sheet [&::-webkit-details-marker]:hidden">
     <svg viewBox="0 0 24 24" class="size-4" aria-hidden="true">
       <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"></circle>
       <path
@@ -28,7 +25,9 @@ const options = languageOptions(locale, Astro.url.pathname);
         stroke-width="1.6"
       ></path>
     </svg>
+    <!-- Spoken name starts with the visible code (WCAG 2.5.3), then says what it is -->
     <span class="font-semibold tracking-wide">{t.codes[locale]}</span>
+    <span class="sr-only">{`, ${t.language}: ${t.names[locale]}`}</span>
     <svg viewBox="0 0 12 12" class="size-3" aria-hidden="true">
       <path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6"></path>
     </svg>

@@ -101,6 +101,171 @@ export const en = {
     ],
     button: "Donate on Ko-fi",
   },
+  legal: {
+    updated: "Last updated: 10 October 2026",
+    footer: {
+      label: "Legal",
+      terms: "Terms of use",
+      privacy: "Privacy",
+      accessibility: "Accessibility",
+    },
+    // "{email}" in a paragraph becomes a link to the contact address
+    terms: {
+      title: "Terms of use",
+      description: "The terms for using BackstageIL, and how far you can rely on its information.",
+      sections: [
+        {
+          heading: "About these terms",
+          paragraphs: [
+            "BackstageIL (www.backstageil.com) is a free website with technical information about performance venues in Israel, made for production crews. By using the site you accept these terms. If you don't accept them, please don't use the site.",
+          ],
+        },
+        {
+          heading: "The information is a starting point",
+          paragraphs: [
+            "The information comes from public sources, the venues, site surveys and crews who worked there. It may be incomplete, out of date or wrong, and venues change their equipment and rules.",
+            "Each hall shows where its information comes from and when it was last checked. Stage measurements marked as not yet confirmed with the venue have not been checked with the venue.",
+          ],
+        },
+        {
+          heading: "Confirm with the venue",
+          paragraphs: [
+            "Before a load-in, confirm with the venue's technical staff everything that matters for safety or planning: rigging points and loads, power, stage size, access and house rules.",
+            "Never rely on this site alone for rigging, structural loads or electrical work. Those decisions belong to qualified people on site, following the venue's instructions and the law.",
+          ],
+        },
+        {
+          heading: "No warranty, limited liability",
+          paragraphs: [
+            "The site is provided free of charge and as is, without any warranty. To the extent the law allows, BackstageIL and the people who run it are not liable for any damage, direct or indirect, that results from using the site or relying on its information, including costs, delays or lost income.",
+            "Nothing in these terms limits liability that the law does not allow to be limited.",
+          ],
+        },
+        {
+          heading: "Venue names",
+          paragraphs: [
+            "Venue and hall names, and any trademarks, belong to their owners and are used only to identify the venues. BackstageIL is independent and is not affiliated with or endorsed by any venue.",
+          ],
+        },
+        {
+          heading: "What you send us",
+          paragraphs: [
+            "When you send photos, corrections or recommendations, you confirm that you have the right to share them, and you allow BackstageIL to publish, edit and keep them on the site free of charge. We may decline or remove anything. Please don't send photos that show people, or anyone's personal details.",
+          ],
+        },
+        {
+          heading: "Places near venues",
+          paragraphs: [
+            "Places in the Nearby section are listed for convenience. BackstageIL doesn't check or stand behind their services. A paid listing is always marked as sponsored.",
+          ],
+        },
+        {
+          heading: "Corrections and removal",
+          paragraphs: [
+            "If something is wrong, or you represent a venue or a place and want information changed or removed, write to {email}. We handle requests as quickly as we can.",
+          ],
+        },
+        {
+          heading: "Using the information",
+          paragraphs: [
+            "You're welcome to use the information for your own work and to link to any page. Please ask us before copying the site's content in bulk or republishing it as a database.",
+          ],
+        },
+        {
+          heading: "Changes and law",
+          paragraphs: [
+            "We may update these terms; the date above shows the current version. These terms are governed by the laws of the State of Israel, and the courts of Tel Aviv-Yafo have exclusive jurisdiction.",
+          ],
+        },
+      ],
+    },
+    privacy: {
+      title: "Privacy",
+      description: "What BackstageIL collects (very little) and how to reach us about it.",
+      sections: [
+        {
+          heading: "The short version",
+          paragraphs: [
+            "BackstageIL has no accounts, no forms, no ads, no analytics and no tracking cookies. We don't collect personal information through the site.",
+          ],
+        },
+        {
+          heading: "Who we are",
+          paragraphs: ["BackstageIL runs this site. You can reach us at {email}."],
+        },
+        {
+          heading: "What we receive",
+          paragraphs: [
+            "Emails you send us: your address and what you write. We use them only to reply and to act on your request, such as a correction, and delete them when they're no longer needed.",
+            "Technical logs: like any website, our hosting provider (Vercel) receives technical data such as your IP address and browser type to deliver the pages and keep the site secure. We don't use it to identify you. Error reports from our server (Sentry) contain no IP addresses or other personal details.",
+            "Your theme choice: if you switch between light and dark, the choice is saved in your own browser and never reaches us. You can clear it in your browser settings.",
+          ],
+        },
+        {
+          heading: "Cookies",
+          paragraphs: ["The site doesn't use cookies."],
+        },
+        {
+          heading: "Services we use",
+          paragraphs: [
+            "Vercel hosts the site, Sentry collects error reports, and our email is delivered through Namecheap and Google. If you donate, Ko-fi and its payment providers handle the donation under their own privacy policies, and Ko-fi may share your name and message with us; we use them only to thank you.",
+          ],
+        },
+        {
+          heading: "Your rights",
+          paragraphs: [
+            "You can ask to see, correct or delete personal information we hold about you by writing to {email}. We answer within 30 days.",
+          ],
+        },
+        {
+          heading: "Changes",
+          paragraphs: [
+            "If we ever add analytics or advertising, we'll update this page first and ask for your consent wherever the law requires it, before anything is collected.",
+          ],
+        },
+      ],
+    },
+    accessibility: {
+      title: "Accessibility",
+      description:
+        "How BackstageIL works for people with disabilities, and how to report a problem.",
+      sections: [
+        {
+          heading: "Our commitment",
+          paragraphs: [
+            "BackstageIL should be usable by everyone, including people with disabilities. We work to meet the Israeli standard IS 5568, which is based on WCAG 2.0, at level AA.",
+          ],
+        },
+        {
+          heading: "What we've done",
+          paragraphs: [
+            "Pages use proper headings, landmarks and lists, and work with a keyboard alone, with a visible focus.",
+            "Text has enough contrast in both the light and the dark theme, and pages work when zoomed to 200% and on phones.",
+            "Each page declares its language, English or Hebrew. Stage plans also give their measurements as text, and photos have text descriptions.",
+            "There are no time limits and no flashing content, and the site respects the reduced-motion setting.",
+          ],
+        },
+        {
+          heading: "How we checked",
+          paragraphs: [
+            "On 10 October 2026 we checked the main pages, in English and Hebrew and in both themes, with an automated accessibility tool (axe, WCAG 2.1 level AA rules), and fixed what it found.",
+          ],
+        },
+        {
+          heading: "Known limits",
+          paragraphs: [
+            "Some venue and field notes are in English only, also on the Hebrew site. Photos sent by crews may have short descriptions.",
+          ],
+        },
+        {
+          heading: "Report a problem",
+          paragraphs: [
+            "If something on the site is hard to use, write to {email} and we'll fix it as soon as we can. This statement was last updated on 10 October 2026.",
+          ],
+        },
+      ],
+    },
+  },
   notFound: {
     title: "Page not found",
     description: "This page doesn't exist on BackstageIL.",
@@ -197,6 +362,9 @@ export const en = {
     verified: "Last verified",
     correction: "Something wrong or missing?",
     correctionLink: "Suggest a correction",
+    checkWithVenue:
+      "Information may be incomplete or out of date. Confirm with the venue before load-in.",
+    termsLink: "Terms of use",
   },
   sections: {
     general: "General",

@@ -51,6 +51,38 @@ export function streetAddress(
   return (locale === "he" && venue.street_address_he) || venue.street_address || null;
 }
 
+const SOURCE_HE: [RegExp, string][] = [
+  [/Online research/g, "מחקר ברשת"],
+  [/Site survey/g, "סקר באולם"],
+  [/; stage measurements not yet confirmed with the venue/g, "; מידות הבמה טרם אושרו מול המקום"],
+];
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const MONTHS_HE = [
+  "ינואר",
+  "פברואר",
+  "מרץ",
+  "אפריל",
+  "מאי",
+  "יוני",
+  "יולי",
+  "אוגוסט",
+  "ספטמבר",
+  "אוקטובר",
+  "נובמבר",
+  "דצמבר",
+];
+
+/** A hall's source line in the page language: known phrases and months are translated, the rest is kept. */
+export function sourceIn(locale: Locale, source: string): string {
+  if (locale !== "he") return source;
+  let text = SOURCE_HE.reduce((acc, [pattern, he]) => acc.replace(pattern, he), source);
+  text = text.replace(
+    /\((Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\d{4})\)/g,
+    (_, m: string, y: string) => `(${MONTHS_HE[MONTHS.indexOf(m)]} ${y})`,
+  );
+  return text;
+}
+
 /** City name in the page language (the API sends both). */
 export function cityName(locale: Locale, city: { name_en: string; name_he?: string | null }) {
   return locale === "he" && city.name_he ? city.name_he : city.name_en;
