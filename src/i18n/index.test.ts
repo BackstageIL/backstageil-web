@@ -9,6 +9,7 @@ import {
   localePath,
   nameIn,
   pathWithoutLocale,
+  sourceIn,
   streetAddress,
   strings,
 } from ".";
@@ -84,6 +85,16 @@ describe("names", () => {
       "2 Tarsat Blvd",
     );
     expect(streetAddress("he", { street_address: null, street_address_he: null })).toBeNull();
+  });
+
+  it("translates known source phrases on Hebrew pages and keeps the rest", () => {
+    const source =
+      "Online research (Oct 2026); stage measurements not yet confirmed with the venue";
+
+    expect(sourceIn("en", source)).toBe(source);
+    expect(sourceIn("he", source)).toBe("מחקר ברשת (אוקטובר 2026); מידות הבמה טרם אושרו מול המקום");
+    expect(sourceIn("he", "Site survey (Dec 2024)")).toBe("סקר באולם (דצמבר 2024)");
+    expect(sourceIn("he", "Venue tech rider")).toBe("Venue tech rider");
   });
 
   it("sorts the Hebrew list in Hebrew alphabetical order", () => {

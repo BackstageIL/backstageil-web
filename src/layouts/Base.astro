@@ -27,6 +27,10 @@ const nav = [
   { path: "/contact/", label: t.nav.contact },
   { path: "/donate/", label: t.nav.donate },
 ].map((item) => ({ href: localePath(locale, item.path), label: item.label }));
+const legalLinks = (["terms", "privacy", "accessibility"] as const).map((page) => ({
+  href: localePath(locale, `/${page}/`),
+  label: t.legal.footer[page],
+}));
 ---
 
 <!-- Every language keeps the same layout; Hebrew text reads right-to-left inside its block -->
@@ -93,7 +97,16 @@ const nav = [
       <slot />
     </main>
     <footer class="border-t border-rule">
-      <p class="mx-auto max-w-6xl px-4 py-6 text-sm text-muted">{t.site.tagline}</p>
+      <div class="mx-auto flex max-w-6xl flex-wrap items-baseline gap-x-6 gap-y-2 px-4 py-6 text-sm text-muted">
+        <p class="me-auto">{t.site.tagline}</p>
+        <nav aria-label={t.legal.footer.label} class="flex flex-wrap gap-x-5 gap-y-2">
+          {legalLinks.map((link) => (
+            <a href={link.href} class="text-muted">
+              {link.label}
+            </a>
+          ))}
+        </nav>
+      </div>
     </footer>
   </body>
 </html>

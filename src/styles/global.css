@@ -76,6 +76,11 @@
     text-underline-offset: 0.2em;
   }
 
+  /* Links inside running text are underlined, not told apart by color alone (WCAG 1.4.1) */
+  :is(p, dd) a {
+    text-decoration-line: underline;
+  }
+
   :focus-visible {
     outline: 3px solid var(--cue);
     outline-offset: 2px;
