@@ -36,7 +36,8 @@ export default defineConfig({
       PUBLIC_CONTACT_EMAIL: envField.string({
         context: "client",
         access: "public",
-        default: "urielsa@elementostage.com",
+        // Namecheap email forwarding to Uriel's inbox
+        default: "info@backstageil.com",
       }),
     },
   },
