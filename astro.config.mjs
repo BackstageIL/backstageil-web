@@ -4,8 +4,9 @@ import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
 
-// Public URL of the site (canonical links, sitemap). Set SITE_URL in Vercel once the domain exists.
-const site = process.env.SITE_URL ?? "https://backstageil-web.vercel.app";
+// Public URL of the site (canonical links, sitemap, language alternates). backstageil.com
+// redirects here (Vercel domain settings).
+const site = process.env.SITE_URL ?? "https://www.backstageil.com";
 
 // https://astro.build/config
 export default defineConfig({

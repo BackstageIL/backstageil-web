@@ -8,7 +8,9 @@ technicians, stage managers and production crews.
 - [Astro](https://astro.build) with React components. Every venue and hall page is built to
   plain HTML from the [BackstageIL API](https://github.com/BackstageIL/backstageil-api) at build
   time; visitors never call the API.
-- Hosted on Vercel (static). The API triggers a rebuild through a Vercel deploy hook after every
+- Live at https://www.backstageil.com (Hebrew: /he/). Hosted on Vercel (static); the domain is
+  registered at Namecheap, whose DNS points `www` (CNAME) and `backstageil.com` (A, redirects
+  to www) to Vercel. The API triggers a rebuild through a Vercel deploy hook after every
   admin change, so the site shows new data about 1-2 minutes later.
 - English first; every UI string goes through i18n so Hebrew can be added later.
 
