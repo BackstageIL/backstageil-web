@@ -94,6 +94,9 @@ describe("names", () => {
     expect(sourceIn("en", source)).toBe(source);
     expect(sourceIn("he", source)).toBe("מחקר ברשת (אוקטובר 2026); מידות הבמה טרם אושרו מול המקום");
     expect(sourceIn("he", "Site survey (Dec 2024)")).toBe("סקר באולם (דצמבר 2024)");
+    expect(sourceIn("he", "Site survey (Dec 2024); surveyor's drawings 1:100 (Sep 2024)")).toBe(
+      "סקר באולם (דצמבר 2024); תוכניות מודד 1:100 (ספטמבר 2024)",
+    );
     expect(sourceIn("he", "Venue tech rider")).toBe("Venue tech rider");
   });
 

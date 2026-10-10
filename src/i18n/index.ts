@@ -54,6 +54,7 @@ export function streetAddress(
 const SOURCE_HE: [RegExp, string][] = [
   [/Online research/g, "מחקר ברשת"],
   [/Site survey/g, "סקר באולם"],
+  [/surveyor's drawings/g, "תוכניות מודד"],
   [/; stage measurements not yet confirmed with the venue/g, "; מידות הבמה טרם אושרו מול המקום"],
 ];
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
