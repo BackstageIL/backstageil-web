@@ -43,6 +43,14 @@ export function nameIn(locale: Locale, item: { name: string; name_he?: string | 
   return locale === "he" && item.name_he ? item.name_he : item.name;
 }
 
+/** Street address in the page language: the Hebrew one on Hebrew pages when there is one. */
+export function streetAddress(
+  locale: Locale,
+  venue: { street_address?: string | null; street_address_he?: string | null },
+): string | null {
+  return (locale === "he" && venue.street_address_he) || venue.street_address || null;
+}
+
 /** City name in the page language (the API sends both). */
 export function cityName(locale: Locale, city: { name_en: string; name_he?: string | null }) {
   return locale === "he" && city.name_he ? city.name_he : city.name_en;

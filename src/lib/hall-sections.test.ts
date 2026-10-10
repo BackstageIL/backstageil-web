@@ -13,6 +13,7 @@ function hall(fields: Partial<HallDocument> = {}): HallDocument {
       name: "Venue",
       name_he: null,
       street_address: null,
+      street_address_he: null,
       city: { slug: "c", name_en: "City", name_he: "עיר", district: null },
     },
     field_notes: {},

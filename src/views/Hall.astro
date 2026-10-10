@@ -6,7 +6,7 @@ import Gallery from "../components/Gallery.astro";
 import NavigateButton from "../components/NavigateButton.astro";
 import Nearby from "../components/Nearby.astro";
 import StagePlan from "../components/StagePlan.astro";
-import { cityName, localePath, nameIn, strings, type Locale } from "../i18n";
+import { cityName, localePath, nameIn, streetAddress, strings, type Locale } from "../i18n";
 import Base from "../layouts/Base.astro";
 import type { HallDocument } from "../lib/api";
 import { extraLabel, hallSections } from "../lib/hall-sections";
@@ -70,7 +70,11 @@ const description = t.description(where, city);
   </p>
   <h1 class="font-stencil mt-1 text-4xl leading-tight font-bold sm:text-5xl">{hallName}</h1>
   <div class="mt-3">
-    <NavigateButton locale={locale} where={[venueName, venue.street_address, city]} size="small" />
+    <NavigateButton
+      locale={locale}
+      where={[venueName, streetAddress(locale, venue), city]}
+      size="small"
+    />
   </div>
 
   <div class="mt-6 grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-14">

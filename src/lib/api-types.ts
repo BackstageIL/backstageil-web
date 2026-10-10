@@ -649,6 +649,8 @@ export interface components {
             venue_type: components["schemas"]["VenueType"];
             /** Street Address */
             street_address: string | null;
+            /** Street Address He */
+            street_address_he: string | null;
             /** Website */
             website: string | null;
             city: components["schemas"]["CityRef"];
@@ -679,6 +681,8 @@ export interface components {
             venue_type: components["schemas"]["VenueType"];
             /** Street Address */
             street_address: string | null;
+            /** Street Address He */
+            street_address_he: string | null;
             city: components["schemas"]["CityRef"];
             /** Hall Count */
             hall_count: number;
@@ -1275,6 +1279,8 @@ export interface components {
             venue_type: components["schemas"]["VenueType"];
             /** Street Address */
             street_address: string | null;
+            /** Street Address He */
+            street_address_he: string | null;
             /** Website */
             website: string | null;
             city: components["schemas"]["CityRef"];
@@ -1293,6 +1299,8 @@ export interface components {
             city_code: number;
             /** Street Address */
             street_address?: string | null;
+            /** Street Address He */
+            street_address_he?: string | null;
             venue_type: components["schemas"]["VenueType"];
             /** Website */
             website?: string | null;
@@ -1326,6 +1334,8 @@ export interface components {
             name_he?: string | null;
             /** Street Address */
             street_address?: string | null;
+            /** Street Address He */
+            street_address_he?: string | null;
             venue_type?: components["schemas"]["VenueType"] | null;
             /** Website */
             website?: string | null;
@@ -1342,6 +1352,8 @@ export interface components {
             name_he: string | null;
             /** Street Address */
             street_address: string | null;
+            /** Street Address He */
+            street_address_he: string | null;
             city: components["schemas"]["CityRef"];
         };
         /** VenueSummary */
@@ -1355,6 +1367,8 @@ export interface components {
             venue_type: components["schemas"]["VenueType"];
             /** Street Address */
             street_address: string | null;
+            /** Street Address He */
+            street_address_he: string | null;
             city: components["schemas"]["CityRef"];
             /** Hall Count */
             hall_count: number;

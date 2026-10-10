@@ -3,7 +3,7 @@
 import HallRow, { OUTLINE_HEIGHT, OUTLINE_WIDTH } from "../components/HallRow";
 import NavigateButton from "../components/NavigateButton.astro";
 import Nearby from "../components/Nearby.astro";
-import { cityName, nameIn, strings, type Locale } from "../i18n";
+import { cityName, nameIn, streetAddress, strings, type Locale } from "../i18n";
 import Base from "../layouts/Base.astro";
 import { api } from "../lib/site-api";
 import { outlineScale, toListItems } from "../lib/venue-list";
@@ -26,15 +26,16 @@ const item = all.find((v) => v.slug === slug);
 const places = await api.recommendations(slug);
 const name = nameIn(locale, venue);
 const city = cityName(locale, venue.city);
-const where = [name, venue.street_address, city];
+const street = streetAddress(locale, venue);
+const where = [name, street, city];
 ---
 
 <Base title={name} description={t.description(name, city)} locale={locale}>
   <p class="text-sm text-muted">{dictionary.venueType[venue.venue_type]}</p>
   <h1 class="font-stencil mt-1 max-w-4xl text-4xl leading-tight font-bold sm:text-5xl">{name}</h1>
-  <!-- The address reads in the direction of its first word (English street: left-to-right) -->
+  <!-- The address reads in the direction of its first word (English street: left-to-right, Hebrew: right-to-left) -->
   <p class="mt-2" dir="auto">
-    {venue.street_address && `${venue.street_address}, `}
+    {street && `${street}, `}
     {city}
     {venue.city.district && (
       <span class="text-muted">, {dictionary.district[venue.city.district]}</span>
