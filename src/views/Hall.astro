@@ -1,0 +1,256 @@
+---
+/** A hall's technical document: stage plan, every section the venue filled in, photos, nearby. */
+import { PUBLIC_CONTACT_EMAIL } from "astro:env/client";
+
+import Gallery from "../components/Gallery.astro";
+import NavigateButton from "../components/NavigateButton.astro";
+import Nearby from "../components/Nearby.astro";
+import StagePlan from "../components/StagePlan.astro";
+import { cityName, localePath, nameIn, strings, type Locale } from "../i18n";
+import Base from "../layouts/Base.astro";
+import type { HallDocument } from "../lib/api";
+import { extraLabel, hallSections } from "../lib/hall-sections";
+import { mailto } from "../lib/contact";
+import { api } from "../lib/site-api";
+
+interface Props {
+  locale: Locale;
+  venueSlug: string;
+  hallSlug: string;
+}
+
+/** An item particular to this hall (the API's `extras`): a label, and a value and/or a note. */
+interface ExtraItem {
+  label?: string | null;
+  value?: string | number | boolean | null;
+  note?: string | null;
+}
+
+const { locale, venueSlug, hallSlug } = Astro.props;
+const dictionary = strings(locale);
+const hall: HallDocument = await api.hall(venueSlug, hallSlug);
+const venue = hall.venue;
+const sections = hallSections(hall, dictionary);
+const pictures = await api.pictures(venueSlug, hallSlug);
+const places = await api.recommendations(venueSlug);
+const extras = Object.entries((hall.extras ?? {}) as Record<string, ExtraItem>).map(
+  ([key, extra]) => ({
+    key,
+    label: extraLabel(key, extra.label, dictionary),
+    value:
+      extra.value === undefined || extra.value === null
+        ? null
+        : typeof extra.value === "boolean"
+          ? extra.value
+            ? dictionary.values.yes
+            : dictionary.values.no
+          : String(extra.value),
+    note: extra.note ?? null,
+  }),
+);
+const t = dictionary.hall;
+
+const verified = hall.last_verified_at
+  ? new Intl.DateTimeFormat(dictionary.locale.intl, {
+      dateStyle: "medium",
+      timeZone: "UTC",
+    }).format(new Date(hall.last_verified_at))
+  : null;
+const hallName = nameIn(locale, hall);
+const venueName = nameIn(locale, venue);
+const city = cityName(locale, venue.city);
+const where = `${hallName}, ${venueName}`;
+const description = t.description(where, city);
+---
+
+<Base title={where} description={description} locale={locale}>
+  <p class="text-sm">
+    <a href={localePath(locale, `/venues/${venue.slug}/`)}>{venueName}</a>
+    <span class="text-muted">, {city}</span>
+  </p>
+  <h1 class="font-stencil mt-1 text-4xl leading-tight font-bold sm:text-5xl">{hallName}</h1>
+  <div class="mt-3">
+    <NavigateButton locale={locale} where={[venueName, venue.street_address, city]} size="small" />
+  </div>
+
+  <div class="mt-6 grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-14">
+    <aside class="lg:sticky lg:top-6 lg:self-start">
+      <h2 class="sr-only">{t.plan}</h2>
+      <StagePlan hall={hall} locale={locale} />
+    </aside>
+
+    <div class="max-w-2xl">
+      <nav
+        aria-label={t.contents}
+        data-section-index
+        class="sticky top-0 z-10 -mx-4 mb-6 border-b border-rule bg-paper/95 px-4 backdrop-blur sm:mx-0 sm:px-0"
+      >
+        <ul class="flex gap-1 overflow-x-auto py-2 text-sm whitespace-nowrap sm:flex-wrap sm:whitespace-normal">
+          {[
+            { id: "photos", title: t.photos },
+            ...sections,
+            ...(extras.length > 0 ? [{ id: "particular", title: t.particular }] : []),
+            { id: "nearby", title: dictionary.venue.nearby },
+          ].map((section) => (
+            <li>
+              <a
+                href={`#${section.id}`}
+                class="block rounded px-2 py-1 text-ink no-underline hover:bg-sheet aria-[current=true]:bg-ink aria-[current=true]:text-paper"
+              >
+                {section.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <section id="photos" data-section class="scroll-mt-(--index-offset)">
+        <h2 class="font-stencil flex items-center gap-3 text-2xl font-bold">
+          <span aria-hidden="true" class="inline-block h-1.5 w-5 bg-spike"></span>
+          {t.photos}
+        </h2>
+        <div class="mt-3">
+          {pictures.length > 0 && (
+            <Gallery pictures={pictures} hallName={hallName} locale={locale} />
+          )}
+          {pictures.length === 0 && <p class="text-sm text-muted">{t.noPhotos}</p>}
+          <p class="mt-2 text-sm">
+            {t.sendPhotos}{" "}
+            <a href={mailto(PUBLIC_CONTACT_EMAIL, t.photosSubject(where))}>{t.sendPhotosAction}</a>
+          </p>
+        </div>
+      </section>
+
+      {sections.map((section) => (
+        <section
+          id={section.id}
+          data-section
+          class="scroll-mt-(--index-offset) not-first-of-type:mt-10"
+        >
+          <h2 class="font-stencil flex items-center gap-3 text-2xl font-bold">
+            <span aria-hidden="true" class="inline-block h-1.5 w-5 bg-spike" />
+            {section.title}
+          </h2>
+          <dl class="mt-3 border-t border-rule">
+            {section.rows.map((row) => (
+              <div class="border-b border-rule py-2.5">
+                <div class="flex items-baseline justify-between gap-6">
+                  <dt>{row.label}</dt>
+                  {row.value && !row.isText && (
+                    <dd class="font-stencil text-end text-lg font-semibold">{row.value}</dd>
+                  )}
+                </div>
+                {row.value && row.isText && (
+                  <dd class="mt-1" dir="auto">
+                    {row.value}
+                  </dd>
+                )}
+                {row.note && (
+                  <dd class="mt-1 text-sm text-muted" dir="auto">
+                    {row.note}
+                  </dd>
+                )}
+              </div>
+            ))}
+          </dl>
+        </section>
+      ))}
+
+      {extras.length > 0 && (
+        <section id="particular" data-section class="mt-10 scroll-mt-(--index-offset)">
+          <h2 class="font-stencil flex items-center gap-3 text-2xl font-bold">
+            <span aria-hidden="true" class="inline-block h-1.5 w-5 bg-spike" />
+            {t.particular}
+          </h2>
+          <dl class="mt-3 border-t border-rule">
+            {extras.map((extra) => (
+              <div class="border-b border-rule py-2.5" data-key={extra.key}>
+                <div class="flex items-baseline justify-between gap-6">
+                  <dt>{extra.label}</dt>
+                  {extra.value && (
+                    <dd class="font-stencil text-end text-lg font-semibold" dir="auto">
+                      {extra.value}
+                    </dd>
+                  )}
+                </div>
+                {extra.note && (
+                  <dd class="mt-1 text-sm text-muted" dir="auto">
+                    {extra.note}
+                  </dd>
+                )}
+              </div>
+            ))}
+          </dl>
+        </section>
+      )}
+
+      <section id="nearby" data-section class="mt-10 scroll-mt-(--index-offset)">
+        <h2 class="font-stencil flex items-center gap-3 text-2xl font-bold">
+          <span aria-hidden="true" class="inline-block h-1.5 w-5 bg-spike"></span>
+          {dictionary.venue.nearby}
+        </h2>
+        <Nearby venueName={venueName} places={places} locale={locale} />
+      </section>
+
+      <footer class="mt-12 border-t border-rule pt-4 text-sm text-muted">
+        {hall.source && (
+          <p>
+            {t.source}: <span dir="auto">{hall.source}</span>
+          </p>
+        )}
+        {verified && (
+          <p>
+            {t.verified}: <time datetime={hall.last_verified_at}>{verified}</time>
+          </p>
+        )}
+        <p class="mt-3">
+          {t.correction}{" "}
+          <a href={mailto(PUBLIC_CONTACT_EMAIL, t.correctionSubject(where))}>{t.correctionLink}</a>
+        </p>
+      </footer>
+    </div>
+  </div>
+</Base>
+
+<script>
+  // Jumps land just under the index bar, whatever its height (it wraps on wider screens)
+  const bar = document.querySelector<HTMLElement>("[data-section-index]");
+  const setOffset = () =>
+    document.documentElement.style.setProperty(
+      "--index-offset",
+      `${(bar?.offsetHeight ?? 0) + 16}px`,
+    );
+  setOffset();
+  addEventListener("resize", setOffset);
+
+  // Highlight the section being read: the last one whose heading has reached the index bar
+  const sections = [...document.querySelectorAll<HTMLElement>("[data-section]")];
+  const links = new Map(
+    [...document.querySelectorAll<HTMLAnchorElement>("[data-section-index] a")].map((a) => [
+      a.hash.slice(1),
+      a,
+    ]),
+  );
+  let current: HTMLAnchorElement | undefined;
+  let queued = false;
+  const update = () => {
+    queued = false;
+    const line = (bar?.offsetHeight ?? 0) + 24;
+    const reading = sections.filter((s) => s.getBoundingClientRect().top <= line).at(-1);
+    const link = reading ? links.get(reading.id) : undefined;
+    if (link === current) return;
+    current?.removeAttribute("aria-current");
+    link?.setAttribute("aria-current", "true");
+    link?.scrollIntoView({ block: "nearest", inline: "nearest" });
+    current = link;
+  };
+  addEventListener(
+    "scroll",
+    () => {
+      if (!queued) requestAnimationFrame(update);
+      queued = true;
+    },
+    { passive: true },
+  );
+  update();
+</script>

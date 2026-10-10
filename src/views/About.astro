@@ -1,0 +1,23 @@
+---
+import { localePath, strings, type Locale } from "../i18n";
+import Base from "../layouts/Base.astro";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = strings(locale).about;
+---
+
+<Base title={t.title} description={t.description} locale={locale}>
+  <article class="max-w-2xl">
+    <h1 class="font-stencil text-4xl font-bold sm:text-5xl">{t.title}</h1>
+    {t.paragraphs.map((paragraph) => (
+      <p class="mt-4 text-lg leading-relaxed">{paragraph}</p>
+    ))}
+    <p class="mt-6">
+      <a href={localePath(locale, "/contact/")}>{t.contactLink}</a>
+    </p>
+  </article>
+</Base>

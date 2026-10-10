@@ -2,6 +2,7 @@
  * The home page list: venues with their halls, the City → Venue cascade, and one shared scale
  * for the stage outlines so every hall is drawn at the same size per meter.
  */
+import { cityName, nameIn, type Locale } from "../i18n";
 import type { components } from "./api-types";
 import type { VenueDetail } from "./api";
 
@@ -30,21 +31,25 @@ export interface CityOption {
   count: number;
 }
 
-const byName = (a: { name: string }, b: { name: string }) =>
-  a.name.localeCompare(b.name, "en", { sensitivity: "base" });
+const byNameIn =
+  (locale: Locale) =>
+  (a: { name: string }, b: { name: string }): number =>
+    a.name.localeCompare(b.name, locale, { sensitivity: "base" });
 
-export function toListItems(details: VenueDetail[]): VenueListItem[] {
+/** Venues with their halls, names in the page language, sorted in its alphabet. */
+export function toListItems(details: VenueDetail[], locale: Locale = "en"): VenueListItem[] {
+  const byName = byNameIn(locale);
   return details
     .map((venue) => ({
       slug: venue.slug,
-      name: venue.name,
+      name: nameIn(locale, venue),
       type: venue.venue_type,
-      city: { slug: venue.city.slug, name: venue.city.name_en },
+      city: { slug: venue.city.slug, name: cityName(locale, venue.city) },
       district: venue.city.district,
       halls: venue.halls
         .map((hall) => ({
           slug: hall.slug,
-          name: hall.name,
+          name: nameIn(locale, hall),
           seats: hall.capacity_seated,
           width: hall.stage_width_m,
           depth: hall.stage_depth_m,
@@ -54,15 +59,15 @@ export function toListItems(details: VenueDetail[]): VenueListItem[] {
     .sort(byName);
 }
 
-/** Cities that have venues, A–Z, with how many. */
-export function cityOptions(venues: VenueListItem[]): CityOption[] {
+/** Cities that have venues, in alphabetical order, with how many. */
+export function cityOptions(venues: VenueListItem[], locale: Locale = "en"): CityOption[] {
   const cities = new Map<string, CityOption>();
   for (const venue of venues) {
     const city = cities.get(venue.city.slug) ?? { ...venue.city, count: 0 };
     city.count += 1;
     cities.set(city.slug, city);
   }
-  return [...cities.values()].sort(byName);
+  return [...cities.values()].sort(byNameIn(locale));
 }
 
 /** The venues for a city (all when none), then the one venue when chosen. */

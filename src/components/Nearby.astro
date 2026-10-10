@@ -6,18 +6,23 @@
  */
 import { PUBLIC_CONTACT_EMAIL } from "astro:env/client";
 
-import { en } from "../i18n/en";
+import { strings, type Locale } from "../i18n";
 import type { Recommendation } from "../lib/api";
 import { mailto } from "../lib/contact";
-import { distance, groupNearby, telLink } from "../lib/nearby";
+import { distanceParts, groupNearby, telLink } from "../lib/nearby";
 
 interface Props {
   venueName: string;
   places: Recommendation[];
+  locale: Locale;
 }
 
-const { venueName, places } = Astro.props;
-const t = en.venue;
+const { venueName, places, locale } = Astro.props;
+const t = strings(locale).venue;
+const distance = (meters: number) => {
+  const { value, unit } = distanceParts(meters);
+  return t.distance(value, unit);
+};
 const grouped = groupNearby(places);
 const groups = (["crew", "food"] as const).map((id) => ({
   id,
@@ -53,8 +58,16 @@ const groups = (["crew", "food"] as const).map((id) => ({
                 {t.sponsored}
               </p>
             )}
-            {place.address && <p class="mt-1 text-sm">{place.address}</p>}
-            {place.note && <p class="mt-1 text-sm text-muted">{place.note}</p>}
+            {place.address && (
+              <p class="mt-1 text-sm" dir="auto">
+                {place.address}
+              </p>
+            )}
+            {place.note && (
+              <p class="mt-1 text-sm text-muted" dir="auto">
+                {place.note}
+              </p>
+            )}
             {place.phone && (
               <p class="mt-1 text-sm">
                 <a href={telLink(place.phone)}>{place.phone}</a>

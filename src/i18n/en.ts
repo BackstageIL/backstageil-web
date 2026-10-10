@@ -1,12 +1,26 @@
 /**
- * English UI strings. Every visible text goes through here so Hebrew (BSIL-34) is another file
- * with the same keys, not a rewrite.
+ * English UI strings. Every visible text goes through here; Hebrew (`he.ts`) has exactly the
+ * same keys (the `Strings` type below enforces it).
  */
 import type { components } from "../lib/api-types";
 
 type Schemas = components["schemas"];
 
 export const en = {
+  locale: {
+    // Formatting of numbers and dates
+    intl: "en-GB",
+    // The header language menu; each language is listed by its own name
+    language: "Language",
+    names: { en: "English", he: "עברית" },
+    // Short codes on the menu button (ISO 639-1)
+    codes: { en: "EN", he: "HE" },
+  },
+  units: {
+    meters: "m",
+    kg: "kg",
+    amps: "A",
+  },
   site: {
     name: "BackstageIL",
     tagline: "Technical information about performance venues in Israel, for production crews.",
@@ -30,7 +44,7 @@ export const en = {
     venue: "Venue",
     allVenues: "All venues",
     count: (n: number) => (n === 1 ? "1 venue" : `${n} venues`),
-    seats: (n: number) => `${n.toLocaleString("en")} seats`,
+    seats: (n: number) => `${n.toLocaleString("en-GB")} seats`,
     stage: (width: string, depth: string) => `Stage ${width} × ${depth}`,
     outline: "Stage outline, all drawn to the same scale",
   },
@@ -115,12 +129,13 @@ export const en = {
   venue: {
     description: (name: string, city: string) =>
       `Technical information for ${name}, ${city}: halls, stage sizes and places nearby for crews.`,
-    map: "Open in Google Maps",
-    waze: "Open in Waze",
+    map: "Google Maps",
+    waze: "Navigate with Waze",
     website: "Venue website",
     halls: "Halls",
     nearby: "Nearby",
     sponsored: "Sponsored",
+    distance: (value: number, unit: "m" | "km") => `${value} ${unit} away`,
     groups: {
       crew: {
         title: "Crew essentials",
@@ -150,9 +165,17 @@ export const en = {
     } satisfies Record<Schemas["RecommendationCategory"], string>,
   },
   hall: {
+    description: (where: string, city: string) =>
+      `Technical information for ${where} (${city}): stage, rigging, power, sound and backstage.`,
+    photosSubject: (where: string) => `Photos: ${where}`,
+    correctionSubject: (where: string) => `Correction: ${where}`,
     plan: "Stage plan",
     planScale: "Drawn to scale from the venue's measurements.",
     planMissing: "No stage measurements yet.",
+    planStage: (width: string, depth: string) => `Stage ${width} wide and ${depth} deep`,
+    planProscenium: (value: string) => `proscenium opening ${value}`,
+    planFirstPipe: (value: string) => `first pipe ${value} upstage of the proscenium`,
+    planFoh: (value: string) => `FOH ${value} from the stage`,
     upstage: "Upstage",
     house: "House",
     proscenium: "Proscenium",
@@ -259,4 +282,15 @@ export const en = {
   },
 } as const;
 
-export type Strings = typeof en;
+/** The shape of a dictionary: `en` with its literal strings widened to `string`. */
+type Widen<T> = T extends string
+  ? string
+  : T extends (...args: infer A) => infer R
+    ? (...args: A) => Widen<R>
+    : T extends readonly (infer U)[]
+      ? readonly Widen<U>[]
+      : T extends object
+        ? { readonly [K in keyof T]: Widen<T[K]> }
+        : T;
+
+export type Strings = Widen<typeof en>;

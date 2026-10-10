@@ -1,0 +1,76 @@
+---
+/** A venue: address and map, its halls (same outlines as the home list), and places nearby. */
+import HallRow, { OUTLINE_HEIGHT, OUTLINE_WIDTH } from "../components/HallRow";
+import NavigateButton from "../components/NavigateButton.astro";
+import Nearby from "../components/Nearby.astro";
+import { cityName, nameIn, strings, type Locale } from "../i18n";
+import Base from "../layouts/Base.astro";
+import { api } from "../lib/site-api";
+import { outlineScale, toListItems } from "../lib/venue-list";
+
+interface Props {
+  locale: Locale;
+  slug: string;
+}
+
+const { locale, slug } = Astro.props;
+const dictionary = strings(locale);
+const t = dictionary.venue;
+const all = toListItems(
+  await Promise.all((await api.listVenues()).map((venue) => api.venue(venue.slug))),
+  locale,
+);
+const scale = outlineScale(all, OUTLINE_WIDTH, OUTLINE_HEIGHT); // same scale as the home list
+const venue = await api.venue(slug);
+const item = all.find((v) => v.slug === slug);
+const places = await api.recommendations(slug);
+const name = nameIn(locale, venue);
+const city = cityName(locale, venue.city);
+const where = [name, venue.street_address, city];
+---
+
+<Base title={name} description={t.description(name, city)} locale={locale}>
+  <p class="text-sm text-muted">{dictionary.venueType[venue.venue_type]}</p>
+  <h1 class="font-stencil mt-1 max-w-4xl text-4xl leading-tight font-bold sm:text-5xl">{name}</h1>
+  <!-- The address reads in the direction of its first word (English street: left-to-right) -->
+  <p class="mt-2" dir="auto">
+    {venue.street_address && `${venue.street_address}, `}
+    {city}
+    {venue.city.district && (
+      <span class="text-muted">, {dictionary.district[venue.city.district]}</span>
+    )}
+  </p>
+  <div class="mt-4">
+    <NavigateButton locale={locale} where={where}>
+      {venue.website && (
+        <a href={venue.website} rel="noopener" class="text-sm">
+          {t.website}
+        </a>
+      )}
+    </NavigateButton>
+  </div>
+
+  <div class="mt-10 grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+    <section>
+      <h2 class="font-stencil flex items-center gap-3 text-2xl font-bold">
+        <span aria-hidden="true" class="inline-block h-1.5 w-5 bg-spike"></span>
+        {t.halls}
+      </h2>
+      <ul class="mt-3 space-y-2 border-t border-rule pt-3">
+        {item?.halls.map((hall) => (
+          <li>
+            <HallRow venue={slug} hall={hall} scale={scale} locale={locale} />
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section aria-labelledby="nearby">
+      <h2 id="nearby" class="font-stencil flex items-center gap-3 text-2xl font-bold">
+        <span aria-hidden="true" class="inline-block h-1.5 w-5 bg-spike"></span>
+        {t.nearby}
+      </h2>
+      <Nearby venueName={name} places={places} locale={locale} />
+    </section>
+  </div>
+</Base>

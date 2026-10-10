@@ -3,16 +3,17 @@
  * A hall's photos: thumbnails that open a full-size viewer (native <dialog>: Esc closes,
  * arrows and swipe move between photos). Files come straight from picture storage.
  */
-import { en } from "../i18n/en";
+import { strings, type Locale } from "../i18n";
 import type { Picture } from "../lib/api";
 
 interface Props {
   pictures: Picture[];
   hallName: string;
+  locale: Locale;
 }
 
-const { pictures, hallName } = Astro.props;
-const t = en.hall;
+const { pictures, hallName, locale } = Astro.props;
+const t = strings(locale).hall;
 const THUMB = 400; // longest edge of the stored thumbnails
 
 const items = pictures.map((picture, index) => {
@@ -26,7 +27,7 @@ const items = pictures.map((picture, index) => {
 });
 ---
 
-<ul class="grid grid-cols-2 gap-2 sm:grid-cols-3" data-gallery>
+<ul class="grid grid-cols-2 gap-2 sm:grid-cols-3" data-gallery data-locale={locale}>
   {items.map((item, index) => (
     <li>
       <button
@@ -92,9 +93,10 @@ const items = pictures.map((picture, index) => {
 </style>
 
 <script>
-  import { en } from "../i18n/en";
+  import { strings, type Locale } from "../i18n";
 
   const gallery = document.querySelector<HTMLElement>("[data-gallery]");
+  const locale: Locale = gallery?.dataset.locale === "he" ? "he" : "en";
   const viewer = document.querySelector<HTMLDialogElement>("[data-viewer]");
   const image = viewer?.querySelector<HTMLImageElement>("[data-viewer-image]");
   const caption = viewer?.querySelector<HTMLElement>("[data-viewer-caption]");
@@ -111,7 +113,7 @@ const items = pictures.map((picture, index) => {
       image.width = Number(data.width);
       image.height = Number(data.height);
       caption.textContent = data.caption ?? "";
-      counter.textContent = en.hall.photoCounter(current + 1, buttons.length);
+      counter.textContent = strings(locale).hall.photoCounter(current + 1, buttons.length);
     };
 
     buttons.forEach((button, index) =>

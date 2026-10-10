@@ -1,40 +1,52 @@
 ---
 import "../styles/global.css";
-import { en } from "../i18n/en";
+import LanguageMenu from "../components/LanguageMenu.astro";
 import ThemeToggle from "../components/ThemeToggle.astro";
+import { localePath, pathWithoutLocale, strings, type Locale } from "../i18n";
 
 interface Props {
   title: string;
   description: string;
+  locale: Locale;
   noindex?: boolean;
 }
 
-const { title, description, noindex = false } = Astro.props;
-const fullTitle = title === en.site.name ? title : `${title} | ${en.site.name}`;
-const canonical = new URL(Astro.url.pathname, Astro.site);
-const lang = Astro.currentLocale ?? "en";
-const dir = lang === "he" ? "rtl" : "ltr";
+const { title, description, locale, noindex = false } = Astro.props;
+const t = strings(locale);
+const fullTitle = title === t.site.name ? title : `${title} | ${t.site.name}`;
+const path = Astro.url.pathname;
+const canonical = new URL(path, Astro.site);
+const basePath = pathWithoutLocale(path);
+const alternates = {
+  en: new URL(localePath("en", basePath), Astro.site),
+  he: new URL(localePath("he", basePath), Astro.site),
+};
 const nav = [
-  { href: "/", label: en.nav.venues },
-  { href: "/about/", label: en.nav.about },
-  { href: "/contact/", label: en.nav.contact },
-  { href: "/donate/", label: en.nav.donate },
-];
+  { path: "/", label: t.nav.venues },
+  { path: "/about/", label: t.nav.about },
+  { path: "/contact/", label: t.nav.contact },
+  { path: "/donate/", label: t.nav.donate },
+].map((item) => ({ href: localePath(locale, item.path), label: item.label }));
 ---
 
-<html lang={lang} dir={dir}>
+<!-- Every language keeps the same layout; Hebrew text reads right-to-left inside its block -->
+<html lang={locale} dir="ltr">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="en" href={alternates.en} />
+    <link rel="alternate" hreflang="he" href={alternates.he} />
+    <link rel="alternate" hreflang="x-default" href={alternates.en} />
     {noindex && <meta name="robots" content="noindex" />}
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content={en.site.name} />
+    <meta property="og:site_name" content={t.site.name} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={locale === "he" ? "he_IL" : "en_GB"} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <script is:inline>
@@ -50,25 +62,30 @@ const nav = [
   <body class="min-h-dvh bg-paper text-ink">
     <header class="border-b border-rule">
       <div class="mx-auto flex max-w-6xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3">
-        <a href="/" class="font-stencil text-xl font-bold text-ink no-underline">
-          {en.site.name}
+        <a
+          href={localePath(locale, "/")}
+          dir="ltr"
+          class="font-stencil text-xl font-bold text-ink no-underline"
+        >
+          {t.site.name}
         </a>
         <nav
-          aria-label={en.nav.menu}
+          aria-label={t.nav.menu}
           class="order-last flex w-full gap-5 text-sm sm:order-none sm:ms-auto sm:w-auto"
         >
           {nav.map((item) => (
             <a
               href={item.href}
               class="text-ink no-underline hover:underline aria-[current=page]:underline aria-[current=page]:decoration-2"
-              aria-current={Astro.url.pathname === item.href ? "page" : undefined}
+              aria-current={path === item.href ? "page" : undefined}
             >
               {item.label}
             </a>
           ))}
         </nav>
-        <div class="ms-auto sm:ms-0">
-          <ThemeToggle />
+        <div class="ms-auto flex items-center gap-2 sm:ms-0">
+          <LanguageMenu locale={locale} />
+          <ThemeToggle locale={locale} />
         </div>
       </div>
     </header>
@@ -76,7 +93,7 @@ const nav = [
       <slot />
     </main>
     <footer class="border-t border-rule">
-      <p class="mx-auto max-w-6xl px-4 py-6 text-sm text-muted">{en.site.tagline}</p>
+      <p class="mx-auto max-w-6xl px-4 py-6 text-sm text-muted">{t.site.tagline}</p>
     </footer>
   </body>
 </html>

@@ -60,7 +60,7 @@ export function gridLines(length: number): number[] {
   return Array.from({ length: Math.max(0, Math.ceil(length) - 1) }, (_, i) => i + 1);
 }
 
-/** A readable length: "14 m", "12.5 m". */
-export function meters(value: number): string {
-  return `${Number(value.toFixed(2))} m`;
+/** A readable length: "14 m", "12.5 m" (or "14 מ׳" with the Hebrew unit). */
+export function meters(value: number, unit = "m"): string {
+  return `${Number(value.toFixed(2))} ${unit}`;
 }

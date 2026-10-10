@@ -1,0 +1,74 @@
+---
+/**
+ * Header language menu: a button showing the current language opens a list of all languages
+ * (each by its own name); picking one opens the same page in it. Works without JavaScript.
+ */
+import { languageOptions, strings, type Locale } from "../i18n";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = strings(locale).locale;
+const options = languageOptions(locale, Astro.url.pathname);
+---
+
+<details class="relative" data-language-menu>
+  <summary
+    aria-label={`${t.language}: ${t.names[locale]}`}
+    class="flex cursor-pointer list-none items-center gap-1.5 rounded-full border border-rule px-3 py-1.5 text-sm text-ink hover:bg-sheet [&::-webkit-details-marker]:hidden"
+  >
+    <svg viewBox="0 0 24 24" class="size-4" aria-hidden="true">
+      <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"></circle>
+      <path
+        d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"
+      ></path>
+    </svg>
+    <span class="font-semibold tracking-wide">{t.codes[locale]}</span>
+    <svg viewBox="0 0 12 12" class="size-3" aria-hidden="true">
+      <path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6"></path>
+    </svg>
+  </summary>
+  <ul class="absolute end-0 z-20 mt-2 min-w-40 rounded border border-rule bg-sheet py-1 text-sm shadow-lg">
+    {options.map((option) => (
+      <li>
+        <a
+          href={option.href}
+          lang={option.locale}
+          hreflang={option.locale}
+          aria-current={option.current ? "true" : undefined}
+          class="flex items-center justify-between gap-4 px-3 py-2 text-ink no-underline hover:bg-paper aria-[current=true]:font-semibold"
+        >
+          <span class="flex items-center gap-2.5">
+            <span class="w-6 font-semibold tracking-wide text-muted">{option.code}</span>
+            <span dir="auto">{option.name}</span>
+          </span>
+          {option.current && (
+            <svg viewBox="0 0 12 12" class="size-3" aria-hidden="true">
+              <path d="M2 6.5 5 9l5-6" fill="none" stroke="currentColor" stroke-width="1.8" />
+            </svg>
+          )}
+        </a>
+      </li>
+    ))}
+  </ul>
+</details>
+
+<script>
+  // Close the menu on a click outside it or on Escape
+  for (const menu of document.querySelectorAll<HTMLDetailsElement>("[data-language-menu]")) {
+    document.addEventListener("click", (event) => {
+      if (menu.open && !menu.contains(event.target as Node)) menu.open = false;
+    });
+    menu.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && menu.open) {
+        menu.open = false;
+        menu.querySelector("summary")?.focus();
+      }
+    });
+  }
+</script>

@@ -1,0 +1,12 @@
+---
+import { venuePaths } from "../../../../lib/paths";
+import Venue from "../../../../views/Venue.astro";
+
+export function getStaticPaths() {
+  return venuePaths();
+}
+
+const { venue } = Astro.params as { venue: string };
+---
+
+<Venue locale="he" slug={venue} />

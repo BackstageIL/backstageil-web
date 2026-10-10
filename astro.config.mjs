@@ -13,11 +13,15 @@ export default defineConfig({
   // Static site: every page is built from the API at build time (the API triggers a rebuild
   // after admin changes), so visitors never call the API.
   output: "static",
-  integrations: [react(), sitemap()],
-  // English first; Hebrew (BSIL-34) is added as another locale with a /he/ prefix.
+  integrations: [
+    react(),
+    // Each page listed with its other-language version (hreflang alternates)
+    sitemap({ i18n: { defaultLocale: "en", locales: { en: "en", he: "he" } } }),
+  ],
+  // English at the plain URLs, Hebrew under /he/
   i18n: {
     defaultLocale: "en",
-    locales: ["en"],
+    locales: ["en", "he"],
     routing: { prefixDefaultLocale: false },
   },
   env: {
