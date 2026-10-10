@@ -9,6 +9,7 @@ function venue(slug: string, city: string, halls: [string, number | null, number
     name: slug.replace(/-/g, " "),
     venue_type: "culture_hall",
     street_address: null,
+    street_address_he: null,
     website: null,
     city: { slug: city, name_en: city.toUpperCase(), district: "north" },
     halls: halls.map(([name, width, depth]) => ({

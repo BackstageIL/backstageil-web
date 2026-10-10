@@ -17,6 +17,7 @@ function venue(slug: string) {
     name: slug,
     venue_type: "club",
     street_address: null,
+    street_address_he: null,
     city: { slug: "c", name_en: "C", district: null },
     hall_count: 1,
   };

@@ -3,7 +3,15 @@ import { describe, expect, it } from "vitest";
 import type { VenueDetail } from "../lib/api";
 import { formatValue } from "../lib/hall-sections";
 import { toListItems } from "../lib/venue-list";
-import { cityName, languageOptions, localePath, nameIn, pathWithoutLocale, strings } from ".";
+import {
+  cityName,
+  languageOptions,
+  localePath,
+  nameIn,
+  pathWithoutLocale,
+  streetAddress,
+  strings,
+} from ".";
 
 /** Every key path of a dictionary, with the kind of value it holds. */
 function shape(value: unknown, path = ""): string[] {
@@ -67,6 +75,17 @@ describe("names", () => {
     expect(cityName("en", { name_en: "Haifa", name_he: "חיפה" })).toBe("Haifa");
   });
 
+  it("uses the Hebrew street address on Hebrew pages when there is one", () => {
+    const venue = { street_address: "2 Tarsat Blvd", street_address_he: 'שדרות תרס"ט 2' };
+
+    expect(streetAddress("he", venue)).toBe('שדרות תרס"ט 2');
+    expect(streetAddress("en", venue)).toBe("2 Tarsat Blvd");
+    expect(streetAddress("he", { street_address: "2 Tarsat Blvd", street_address_he: null })).toBe(
+      "2 Tarsat Blvd",
+    );
+    expect(streetAddress("he", { street_address: null, street_address_he: null })).toBeNull();
+  });
+
   it("sorts the Hebrew list in Hebrew alphabetical order", () => {
     const venue = (slug: string, name: string, nameHe: string) =>
       ({
@@ -75,6 +94,7 @@ describe("names", () => {
         name_he: nameHe,
         venue_type: "theater",
         street_address: null,
+        street_address_he: null,
         website: null,
         city: { slug: "c", name_en: "C", name_he: "ע", district: null },
         halls: [],
