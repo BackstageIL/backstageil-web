@@ -32,8 +32,9 @@ const where = [name, venue.street_address, city];
 <Base title={name} description={t.description(name, city)} locale={locale}>
   <p class="text-sm text-muted">{dictionary.venueType[venue.venue_type]}</p>
   <h1 class="font-stencil mt-1 max-w-4xl text-4xl leading-tight font-bold sm:text-5xl">{name}</h1>
-  <p class="mt-2">
-    {venue.street_address && <span dir="auto">{venue.street_address}, </span>}
+  <!-- The address reads in the direction of its first word (English street: left-to-right) -->
+  <p class="mt-2" dir="auto">
+    {venue.street_address && `${venue.street_address}, `}
     {city}
     {venue.city.district && (
       <span class="text-muted">, {dictionary.district[venue.city.district]}</span>
