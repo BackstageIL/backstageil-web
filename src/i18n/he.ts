@@ -33,6 +33,8 @@ export const he: Strings = {
   home: {
     title: "לאיזה אולם אתם נכנסים?",
     intro: "מידות במה, תלייה, חשמל, מאחורי הקלעים וכללי הבית של אולמות מופעים בישראל.",
+    search: "חיפוש",
+    searchPlaceholder: "שם מקום, אולם או עיר",
     city: "עיר",
     allCities: "כל הערים",
     venue: "מקום",

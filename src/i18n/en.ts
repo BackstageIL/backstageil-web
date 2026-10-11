@@ -39,6 +39,8 @@ export const en = {
     title: "Which venue are you loading into?",
     intro:
       "Stage sizes, rigging, power, backstage and house rules for performance venues in Israel.",
+    search: "Search",
+    searchPlaceholder: "Venue, hall or city",
     city: "City",
     allCities: "All cities",
     venue: "Venue",

@@ -1,7 +1,14 @@
 import { describe, expect, it } from "vitest";
 
 import type { VenueDetail } from "./api";
-import { cityOptions, filterVenues, outlineScale, toListItems } from "./venue-list";
+import {
+  cityOptions,
+  filterVenues,
+  matchesQuery,
+  normalize,
+  outlineScale,
+  toListItems,
+} from "./venue-list";
 
 function venue(slug: string, city: string, halls: [string, number | null, number | null][]) {
   return {
@@ -84,5 +91,81 @@ describe("outlineScale", () => {
 
   it("is 0 without any measured stage", () => {
     expect(outlineScale(toListItems([venue("x", "c", [["h", null, null]])]), 112, 84)).toBe(0);
+  });
+});
+
+describe("text search", () => {
+  const [haam] = toListItems([
+    {
+      ...venue("beit-haam", "tel-aviv", [["main", null, null]]),
+      name: "Beit HaAm Tel Aviv",
+      name_he: "בית העם תל אביב",
+      street_address: "2 Tarsat Blvd",
+      street_address_he: 'שדרות תרס"ט 2',
+      city: {
+        slug: "tel-aviv",
+        name_en: "Tel Aviv - Yafo",
+        name_he: "תל אביב -יפו",
+        district: "tel_aviv",
+      },
+      halls: [
+        {
+          slug: "rovina",
+          name: "Rovina Hall",
+          name_he: "אולם רובינא",
+          capacity_seated: 920,
+          stage_width_m: null,
+          stage_depth_m: null,
+        },
+      ],
+    } as VenueDetail,
+  ]);
+
+  it("normalizes case, niqqud, quotes, geresh and dashes", () => {
+    expect(normalize("Tel Aviv - Yafo")).toBe("tel aviv yafo");
+    expect(normalize('ת"א')).toBe("תא");
+    expect(normalize("צ׳רלס ברונפמן")).toBe("צרלס ברונפמן");
+    expect(normalize("שָׁלוֹם")).toBe("שלום");
+  });
+
+  it.each([
+    ["beit haam", true],
+    ["BEIT-HAAM", true],
+    ["בית העם", true],
+    ["tel aviv", true],
+    ["תל אביב יפו", true],
+    ["rovina", true],
+    ["רובינא", true],
+    ['תרס"ט', true],
+    ['ת"א', true],
+    ["ת״א", true],
+    ["TLV", true],
+    ["haifa", false],
+    ["beit haifa", false],
+  ])("%s → %s", (query, expected) => {
+    expect(matchesQuery(haam, query)).toBe(expected);
+  });
+
+  it("doesn't match an abbreviation inside other words", () => {
+    const [tzavta] = toListItems([
+      {
+        ...venue("tzavta", "tel-aviv", []),
+        name: "Tzavta",
+        name_he: "צוותא",
+        city: { slug: "x", name_en: "X", name_he: "רמת גן", district: null },
+      } as VenueDetail,
+    ]);
+    expect(matchesQuery(tzavta, 'ת"א')).toBe(false);
+  });
+
+  it("combines with the city filter", () => {
+    const all = [...venues, haam];
+    expect(
+      filterVenues(all, "", "", "hall")
+        .shown.map((v) => v.slug)
+        .sort(),
+    ).toEqual(["beit-haam", "zeta-hall"]);
+    expect(filterVenues(all, "haifa", "", "hall").shown.map((v) => v.slug)).toEqual(["zeta-hall"]);
+    expect(filterVenues(all, "", "", "nothing like this").shown).toEqual([]);
   });
 });

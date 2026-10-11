@@ -1,6 +1,6 @@
 /**
- * The home page list: venues with their halls, the City → Venue cascade, and one shared scale
- * for the stage outlines so every hall is drawn at the same size per meter.
+ * The home page list: venues with their halls, the free-text search and City → Venue cascade,
+ * and one shared scale for the stage outlines so every hall is drawn at the same size per meter.
  */
 import { cityName, nameIn, type Locale } from "../i18n";
 import type { components } from "./api-types";
@@ -23,6 +23,8 @@ export interface VenueListItem {
   city: { slug: string; name: string };
   district: Schemas["District"] | null;
   halls: HallListItem[];
+  /** Venue, city, street and hall names in both languages, normalized for the text search */
+  keywords: string;
 }
 
 export interface CityOption {
@@ -35,6 +37,51 @@ const byNameIn =
   (locale: Locale) =>
   (a: { name: string }, b: { name: string }): number =>
     a.name.localeCompare(b.name, locale, { sensitivity: "base" });
+
+/**
+ * Text for matching: lower case, without niqqud/accents, quotes or geresh (so ת"א = תא), and with
+ * any other punctuation (dashes, commas) as a space.
+ */
+export function normalize(text: string): string {
+  return text
+    .normalize("NFKD")
+    .replace(/\p{M}/gu, "")
+    .toLowerCase()
+    .replace(/['"`\u05F3\u05F4\u2018\u2019\u201C\u201D]/g, "")
+    .replace(/[^\p{L}\p{N}]+/gu, " ")
+    .trim();
+}
+
+function keywordsOf(venue: VenueDetail): string {
+  const texts = [
+    venue.name,
+    venue.name_he,
+    venue.city.name_en,
+    venue.city.name_he,
+    venue.street_address,
+    venue.street_address_he,
+    ...venue.halls.flatMap((hall) => [hall.name, hall.name_he]),
+  ];
+  return normalize(texts.filter(Boolean).join(" "));
+}
+
+/** Common city abbreviations (after normalize, so ת"א is "תא"), searched as the full name. */
+const ABBREVIATIONS: Record<string, string> = {
+  תא: "תל אביב",
+  בש: "באר שבע",
+  פת: "פתח תקווה",
+  ראשלצ: "ראשון לציון",
+  tlv: "tel aviv",
+};
+
+/** True when every word of the query appears in the venue's names (any language). */
+export function matchesQuery(venue: VenueListItem, query: string): boolean {
+  const words = normalize(query)
+    .split(" ")
+    .filter(Boolean)
+    .flatMap((word) => (ABBREVIATIONS[word] ?? word).split(" "));
+  return words.every((word) => venue.keywords.includes(word));
+}
 
 /** Venues with their halls, names in the page language, sorted in its alphabet. */
 export function toListItems(details: VenueDetail[], locale: Locale = "en"): VenueListItem[] {
@@ -55,6 +102,7 @@ export function toListItems(details: VenueDetail[], locale: Locale = "en"): Venu
           depth: hall.stage_depth_m,
         }))
         .sort(byName),
+      keywords: keywordsOf(venue),
     }))
     .sort(byName);
 }
@@ -70,9 +118,10 @@ export function cityOptions(venues: VenueListItem[], locale: Locale = "en"): Cit
   return [...cities.values()].sort(byNameIn(locale));
 }
 
-/** The venues for a city (all when none), then the one venue when chosen. */
-export function filterVenues(venues: VenueListItem[], city: string, venue: string) {
-  const inCity = city ? venues.filter((v) => v.city.slug === city) : venues;
+/** The venues matching the text and the city (all when none), then the one venue when chosen. */
+export function filterVenues(venues: VenueListItem[], city: string, venue: string, query = "") {
+  const matching = query ? venues.filter((v) => matchesQuery(v, query)) : venues;
+  const inCity = city ? matching.filter((v) => v.city.slug === city) : matching;
   const chosen = venue ? inCity.filter((v) => v.slug === venue) : inCity;
   return { venueOptions: inCity, shown: chosen.length ? chosen : inCity };
 }
