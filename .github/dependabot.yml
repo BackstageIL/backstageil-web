@@ -5,8 +5,15 @@ updates:
     schedule:
       interval: "weekly"
     groups:
+      # Small updates together in one weekly PR; each major update comes on its own, so one that
+      # needs work (or isn't supported yet) doesn't block the rest
       npm-dependencies:
         patterns: ["*"]
+        update-types: ["minor", "patch"]
+    ignore:
+      # @astrojs/check (npm run check) doesn't accept TypeScript 7 yet; skip 7.x until it does
+      - dependency-name: "typescript"
+        versions: [">=7"]
     commit-message:
       prefix: "deps"
 
