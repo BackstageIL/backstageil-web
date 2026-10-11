@@ -1,7 +1,8 @@
 /**
- * Home page list with the City → Venue dropdowns. Rendered to HTML at build time (the full list
- * works without JavaScript and for search engines); the dropdowns filter it in the browser.
- * The choice is kept in the URL (?city=&venue=) so it can be shared and survives "back".
+ * Home page list with a free-text search and the City → Venue dropdowns. Rendered to HTML at
+ * build time (the full list works without JavaScript and for search engines); the search and the
+ * dropdowns filter it in the browser. The choice is kept in the URL (?q=&city=&venue=) so it can
+ * be shared and survives "back".
  */
 import { useEffect, useMemo, useState } from "react";
 
@@ -17,19 +18,24 @@ interface Props {
 export default function VenueBrowser({ venues, locale }: Props) {
   const dictionary = strings(locale);
   const t = dictionary.home;
-  const [{ city, venue }, setChoice] = useState({ city: "", venue: "" });
+  const [{ query, city, venue }, setChoice] = useState({ query: "", city: "", venue: "" });
 
   // The page is built without a URL, so a shared choice (?city=&venue=) is restored once it
   // loads. Reading it during the first render would make it differ from the built HTML.
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time sync from the URL
-    setChoice({ city: params.get("city") ?? "", venue: params.get("venue") ?? "" });
+    setChoice({
+      query: params.get("q") ?? "",
+      city: params.get("city") ?? "",
+      venue: params.get("venue") ?? "",
+    });
   }, []);
 
-  const choose = (next: { city: string; venue: string }) => {
+  const choose = (next: { query: string; city: string; venue: string }) => {
     setChoice(next);
     const params = new URLSearchParams();
+    if (next.query) params.set("q", next.query);
     if (next.city) params.set("city", next.city);
     if (next.venue) params.set("venue", next.venue);
     const query = params.toString();
@@ -38,16 +44,31 @@ export default function VenueBrowser({ venues, locale }: Props) {
 
   const cities = useMemo(() => cityOptions(venues, locale), [venues, locale]);
   const scale = useMemo(() => outlineScale(venues, OUTLINE_WIDTH, OUTLINE_HEIGHT), [venues]);
-  const { venueOptions, shown } = filterVenues(venues, city, venue);
+  const { venueOptions, shown } = filterVenues(venues, city, venue, query);
 
   return (
     <div>
-      <div className="mt-6 grid gap-3 sm:grid-cols-2 sm:gap-4">
+      <div className="mt-6">
+        <label htmlFor="q" className="block text-sm text-muted">
+          {t.search}
+        </label>
+        <input
+          id="q"
+          type="search"
+          dir="auto"
+          autoComplete="off"
+          value={query}
+          placeholder={t.searchPlaceholder}
+          onChange={(event) => choose({ query: event.target.value, city, venue: "" })}
+          className="mt-1 w-full rounded border border-rule bg-sheet px-3 py-2.5 text-ink"
+        />
+      </div>
+      <div className="mt-3 grid gap-3 sm:grid-cols-2 sm:gap-4">
         <Select
           id="city"
           label={t.city}
           value={city}
-          onChange={(value) => choose({ city: value, venue: "" })}
+          onChange={(value) => choose({ query, city: value, venue: "" })}
           options={[
             { value: "", label: t.allCities },
             ...cities.map((c) => ({ value: c.slug, label: `${c.name} (${c.count})` })),
@@ -57,7 +78,7 @@ export default function VenueBrowser({ venues, locale }: Props) {
           id="venue"
           label={t.venue}
           value={venue}
-          onChange={(value) => choose({ city, venue: value })}
+          onChange={(value) => choose({ query, city, venue: value })}
           options={[
             { value: "", label: t.allVenues },
             ...venueOptions.map((v) => ({ value: v.slug, label: v.name })),
