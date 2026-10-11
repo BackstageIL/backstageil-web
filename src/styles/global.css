@@ -116,3 +116,25 @@
 :root:lang(he) :is(h1, h2, h3, p, dt, dd, li, label, figcaption, summary, option).text-end {
   text-align: right;
 }
+
+/* 3D stage view: labels drawn over the canvas (CSS2DRenderer) */
+.stage3d {
+  touch-action: none;
+}
+.stage3d-labels {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.stage3d-label {
+  font-size: 0.75rem;
+  line-height: 1.2;
+  color: var(--ink);
+  background: color-mix(in srgb, var(--sheet) 85%, transparent);
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+.stage3d-label.muted {
+  color: var(--muted);
+}

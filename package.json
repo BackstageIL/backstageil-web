@@ -29,12 +29,14 @@
     "astro": "^7.3.8",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
-    "tailwindcss": "^4.3.3"
+    "tailwindcss": "^4.3.3",
+    "three": "^0.186.1"
   },
   "private": true,
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "@eslint/js": "^9.39.5",
+    "@types/three": "^0.186.0",
     "eslint": "^9.39.5",
     "eslint-plugin-astro": "^1.7.0",
     "eslint-plugin-react-hooks": "^7.1.1",
