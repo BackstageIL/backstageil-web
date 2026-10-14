@@ -33,6 +33,13 @@ export default defineConfig({
         url: true,
         default: "https://backstageil-api.vercel.app",
       }),
+      // The browser posts the contribution form here (BSIL-58); the API allows only our site
+      PUBLIC_API_URL: envField.string({
+        context: "client",
+        access: "public",
+        url: true,
+        default: "https://backstageil-api.vercel.app",
+      }),
       PUBLIC_CONTACT_EMAIL: envField.string({
         context: "client",
         access: "public",

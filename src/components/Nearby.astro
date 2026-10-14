@@ -1,7 +1,8 @@
 ---
 /**
  * Places near a venue in two groups, Crew essentials and Food and stay. Each group always shows:
- * its places, or a placeholder when there are none yet, and an invitation to send more.
+ * its places, or a placeholder when there are none yet, and an invitation to send more (crew tips
+ * through the contribution form; business listings by email, since they are paid).
  * Shown on the venue page and on every hall page.
  */
 import { PUBLIC_CONTACT_EMAIL } from "astro:env/client";
@@ -9,15 +10,17 @@ import { PUBLIC_CONTACT_EMAIL } from "astro:env/client";
 import { strings, type Locale } from "../i18n";
 import type { Recommendation } from "../lib/api";
 import { mailto } from "../lib/contact";
+import { sendPath } from "../lib/send";
 import { distanceParts, groupNearby, telLink } from "../lib/nearby";
 
 interface Props {
   venueName: string;
+  venueSlug: string;
   places: Recommendation[];
   locale: Locale;
 }
 
-const { venueName, places, locale } = Astro.props;
+const { venueName, venueSlug, places, locale } = Astro.props;
 const t = strings(locale).venue;
 const distance = (meters: number) => {
   const { value, unit } = distanceParts(meters);
@@ -81,7 +84,15 @@ const groups = (["crew", "food"] as const).map((id) => ({
     )}
     <p class="mt-2 text-sm">
       {group.invite}{" "}
-      <a href={mailto(PUBLIC_CONTACT_EMAIL, group.subject(venueName))}>{group.action}</a>
+      <a
+        href={
+          group.id === "crew"
+            ? sendPath(locale, { kind: "nearby", venue: venueSlug })
+            : mailto(PUBLIC_CONTACT_EMAIL, group.subject(venueName))
+        }
+      >
+        {group.action}
+      </a>
     </p>
   </div>
 ))}

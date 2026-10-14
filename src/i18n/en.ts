@@ -83,6 +83,61 @@ export const en = {
       },
     },
   },
+  send: {
+    title: "Send information",
+    description:
+      "Send a correction, a technical document, photos or a venue we're missing. We check everything before it goes on the site.",
+    intro:
+      "We check everything you send before anything changes on the site. Thanks for helping other crews.",
+    kindLabel: "What are you sending?",
+    kinds: {
+      correction: "A correction",
+      document: "A technical document (rider, plan)",
+      photos: "Photos",
+      nearby: "A place near a venue",
+      new_venue: "A venue we're missing",
+      other: "Something else",
+    },
+    venueLabel: "Venue",
+    venueChoose: "Choose a venue",
+    venueOther: "Not listed / other",
+    hallLabel: "Hall",
+    hallAny: "All halls / not sure",
+    venueNameLabel: "Venue name and city",
+    messageLabel: "Your message",
+    messageHint:
+      "What's wrong or missing, what the file shows, or where the place is. No phone numbers or email addresses.",
+    filesLabel: "Files (optional)",
+    filesHint:
+      "Photos, PDF, Word or Excel. Up to 5 files, 4 MB in total. Photos are resized and their location data removed.",
+    chooseFiles: "Choose files",
+    filesTotal: (used: string) => `${used} MB of 4 MB`,
+    removeFile: (name: string) => `Remove ${name}`,
+    preparing: "Preparing photos…",
+    contactTitle: "Your details (optional)",
+    contactHint:
+      "Only so we can ask a follow-up question. We delete them once we've handled your message.",
+    nameLabel: "Name",
+    emailLabel: "Email",
+    rights: "I'm allowed to share this, and it contains no one's personal details.",
+    submit: "Send",
+    sending: "Sending…",
+    success: "Thanks, we got it. We'll check it soon.",
+    sendMore: "Send something else",
+    trap: "Leave this field empty",
+    errors: {
+      personal:
+        "Please remove phone numbers and email addresses from the message. We don't publish personal details.",
+      fileType: (name: string) => `${name} can't be sent. Use photos, PDF, Word or Excel.`,
+      tooLarge: (email: string) =>
+        `That's too much. Send at most 5 files and 4 MB in total, or email larger files to ${email}.`,
+      tooMany: "You've sent several messages in the last hour. Please try again later.",
+      filesUnavailable: (email: string) =>
+        `Files can't be sent right now. Send the text only, or email the files to ${email}.`,
+      invalid: "Please check the form and try again.",
+      network: "Couldn't send. Check your connection and try again.",
+    },
+  },
   about: {
     title: "About BackstageIL",
     description: "What BackstageIL is, who it's for and where its information comes from.",
@@ -190,7 +245,7 @@ export const en = {
         {
           heading: "The short version",
           paragraphs: [
-            "BackstageIL has no accounts, no forms, no ads and no cookies. We count visits anonymously, without identifying anyone, and don't collect personal information through the site.",
+            "BackstageIL has no accounts, no ads and no cookies. We count visits anonymously, without identifying anyone. The only personal information we get is what you choose to give us when you send something.",
           ],
         },
         {
@@ -200,9 +255,10 @@ export const en = {
         {
           heading: "What we receive",
           paragraphs: [
+            "What you send through the form: your message, any files, and your name and email only if you add them. We use it to check and improve the site's information and to reply. Files stay private and are never published as they are; photos lose their location data. Your name and email are deleted once we've handled your message. To stop spam we keep an anonymous code of your connection that changes every day, never your IP address.",
             "Emails you send us: your address and what you write. We use them only to reply and to act on your request, such as a correction, and delete them when they're no longer needed.",
-            "Technical logs: like any website, our hosting provider (Vercel) receives technical data such as your IP address and browser type to deliver the pages and keep the site secure. We don't use it to identify you. Error reports from our server (Sentry) contain no IP addresses or other personal details.",
-            "Visit counts: to see which pages are useful, we use Vercel Web Analytics. It uses no cookies and doesn't store your IP address. Each visit is turned into a one-way code that changes every day, so we see totals (pages viewed, the site you came from, country, type of device) but can't tell who you are or follow you from one day to the next.",
+            "Technical logs: like any website, our hosting provider receives technical data such as your IP address and browser type to deliver the pages and keep the site secure. We don't use it to identify you. Error reports from our server contain no IP addresses or other personal details.",
+            "Visit counts: to see which pages are useful, we count visits anonymously. This uses no cookies and doesn't store your IP address. Each visit is turned into a one-way code that changes every day, so we see totals (pages viewed, the site you came from, country, type of device) but can't tell who you are or follow you from one day to the next.",
             "Your theme choice: if you switch between light and dark, the choice is saved in your own browser and never reaches us. You can clear it in your browser settings.",
           ],
         },
@@ -213,7 +269,7 @@ export const en = {
         {
           heading: "Services we use",
           paragraphs: [
-            "Vercel hosts the site, Sentry collects error reports, and our email is delivered through Namecheap and Google. If you donate, Ko-fi and its payment providers handle the donation under their own privacy policies, and Ko-fi may share your name and message with us; we use them only to thank you.",
+            "A few service providers help us run the site: hosting, error reports, anonymous visit counts, file storage and email delivery. Each receives only what it needs for its job. If you donate, the donation platform and its payment providers handle the donation under their own privacy policies and may share your name and message with us; we use them only to thank you.",
           ],
         },
         {

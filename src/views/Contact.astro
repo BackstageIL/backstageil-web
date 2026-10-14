@@ -1,10 +1,10 @@
 ---
-/** Contact: one email address, one pre-filled link per kind of request. */
+/** Contact: one link per kind of request to the contribution form, and the email address. */
 import { PUBLIC_CONTACT_EMAIL } from "astro:env/client";
 
 import { strings, type Locale } from "../i18n";
 import Base from "../layouts/Base.astro";
-import { mailto } from "../lib/contact";
+import { sendPath, type Kind } from "../lib/send";
 
 interface Props {
   locale: Locale;
@@ -12,7 +12,17 @@ interface Props {
 
 const { locale } = Astro.props;
 const t = strings(locale).contact;
-const requests = Object.entries(t.requests).map(([id, request]) => ({ id, ...request }));
+const kinds: Record<string, Kind> = {
+  recommendation: "nearby",
+  photos: "photos",
+  correction: "correction",
+  venue: "new_venue",
+};
+const requests = Object.entries(t.requests).map(([id, request]) => ({
+  id,
+  kind: kinds[id],
+  ...request,
+}));
 ---
 
 <Base title={t.title} description={t.description} locale={locale}>
@@ -26,7 +36,7 @@ const requests = Object.entries(t.requests).map(([id, request]) => ({ id, ...req
           <h2 class="font-stencil text-xl font-bold">{request.title}</h2>
           <p class="mt-1">{request.text}</p>
           <p class="mt-2">
-            <a href={mailto(PUBLIC_CONTACT_EMAIL, request.subject)}>{request.action}</a>
+            <a href={sendPath(locale, { kind: request.kind })}>{request.action}</a>
           </p>
         </li>
       ))}
