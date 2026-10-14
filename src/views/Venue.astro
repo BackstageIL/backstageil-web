@@ -71,7 +71,7 @@ const where = [name, street, city];
         <span aria-hidden="true" class="inline-block h-1.5 w-5 bg-spike"></span>
         {t.nearby}
       </h2>
-      <Nearby venueName={name} places={places} locale={locale} />
+      <Nearby venueName={name} venueSlug={venue.slug} places={places} locale={locale} />
     </section>
   </div>
 </Base>
