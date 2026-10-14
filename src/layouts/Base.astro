@@ -4,12 +4,15 @@ import "../styles/global.css";
 import LanguageMenu from "../components/LanguageMenu.astro";
 import ThemeToggle from "../components/ThemeToggle.astro";
 import { localePath, pathWithoutLocale, strings, type Locale } from "../i18n";
+import { OG_HEIGHT, OG_WIDTH, ogImagePath } from "../lib/og-image";
 
 interface Props {
   title: string;
   description: string;
   locale: Locale;
   noindex?: boolean;
+  /** The link preview picture (`/og/...`) and its description; the site's own card by default */
+  image?: { path: string; alt: string };
 }
 
 const { title, description, locale, noindex = false } = Astro.props;
@@ -18,6 +21,10 @@ const fullTitle = title === t.site.name ? title : `${title} | ${t.site.name}`;
 const path = Astro.url.pathname;
 const canonical = new URL(path, Astro.site);
 const basePath = pathWithoutLocale(path);
+const image = Astro.props.image ?? {
+  path: ogImagePath(locale),
+  alt: `${t.site.name}. ${t.site.tagline}`,
+};
 const alternates = {
   en: new URL(localePath("en", basePath), Astro.site),
   he: new URL(localePath("he", basePath), Astro.site),
@@ -52,6 +59,12 @@ const legalLinks = (["terms", "privacy", "accessibility"] as const).map((page) =
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:locale" content={locale === "he" ? "he_IL" : "en_GB"} />
+    <meta property="og:image" content={new URL(image.path, Astro.site)} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content={String(OG_WIDTH)} />
+    <meta property="og:image:height" content={String(OG_HEIGHT)} />
+    <meta property="og:image:alt" content={image.alt} />
+    <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <script is:inline>

@@ -5,6 +5,7 @@ import NavigateButton from "../components/NavigateButton.astro";
 import Nearby from "../components/Nearby.astro";
 import { cityName, nameIn, streetAddress, strings, type Locale } from "../i18n";
 import Base from "../layouts/Base.astro";
+import { ogImagePath, venueCard } from "../lib/og-image";
 import { api } from "../lib/site-api";
 import { outlineScale, toListItems } from "../lib/venue-list";
 
@@ -30,7 +31,12 @@ const street = streetAddress(locale, venue);
 const where = [name, street, city];
 ---
 
-<Base title={name} description={t.description(name, city)} locale={locale}>
+<Base
+  title={name}
+  description={t.description(name, city)}
+  locale={locale}
+  image={{ path: ogImagePath(locale, { venue: venue.slug }), alt: venueCard(locale, venue).alt }}
+>
   <p class="text-sm text-muted">{dictionary.venueType[venue.venue_type]}</p>
   <h1 class="font-stencil mt-1 max-w-4xl text-4xl leading-tight font-bold sm:text-5xl">{name}</h1>
   <!-- The address reads in the direction of its first word (English street: left-to-right, Hebrew: right-to-left) -->

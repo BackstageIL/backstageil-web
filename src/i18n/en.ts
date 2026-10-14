@@ -138,6 +138,19 @@ export const en = {
       network: "Couldn't send. Check your connection and try again.",
     },
   },
+  og: {
+    // Link preview pictures (BSIL-59)
+    stage: "Stage",
+    proscenium: "Proscenium",
+    seats: "Seats",
+    size: (width: string, depth: string) => `${width} × ${depth}`,
+    hallSeats: (n: number) => `${n.toLocaleString("en-GB")} seats`,
+    moreHalls: (n: number) => `and ${n} more`,
+    planOf: (hall: string) => `Stage plan: ${hall}`,
+    venues: "Venues",
+    halls: "Halls",
+    alt: (title: string, detail: string | null) => (detail ? `${title}. ${detail}.` : title),
+  },
   about: {
     title: "About BackstageIL",
     description: "What BackstageIL is, who it's for and where its information comes from.",

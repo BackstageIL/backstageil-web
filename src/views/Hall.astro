@@ -18,6 +18,7 @@ import Base from "../layouts/Base.astro";
 import type { HallDocument } from "../lib/api";
 import { extraLabel, hallSections } from "../lib/hall-sections";
 import { sendPath } from "../lib/send";
+import { hallCard, ogImagePath } from "../lib/og-image";
 import { api } from "../lib/site-api";
 
 interface Props {
@@ -70,7 +71,15 @@ const where = `${hallName}, ${venueName}`;
 const description = t.description(where, city);
 ---
 
-<Base title={where} description={description} locale={locale}>
+<Base
+  title={where}
+  description={description}
+  locale={locale}
+  image={{
+    path: ogImagePath(locale, { venue: venue.slug, hall: hall.slug }),
+    alt: hallCard(locale, hall).alt,
+  }}
+>
   <p class="text-sm">
     <a href={localePath(locale, `/venues/${venue.slug}/`)}>{venueName}</a>
     <span class="text-muted">, {city}</span>
