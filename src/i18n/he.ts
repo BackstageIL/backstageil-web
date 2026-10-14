@@ -127,6 +127,18 @@ export const he: Strings = {
       network: "השליחה נכשלה. בדקו את החיבור ונסו שוב.",
     },
   },
+  og: {
+    stage: "במה",
+    proscenium: "פרוסניום",
+    seats: "מושבים",
+    size: (width: string, depth: string) => `${width} × ${depth}`,
+    hallSeats: (n: number) => `${n.toLocaleString("he-IL")} מושבים`,
+    moreHalls: (n: number) => `ועוד ${n}`,
+    planOf: (hall: string) => `תוכנית הבמה: ${hall}`,
+    venues: "מקומות",
+    halls: "אולמות",
+    alt: (title: string, detail: string | null) => (detail ? `${title}. ${detail}.` : title),
+  },
   about: {
     title: "אודות BackstageIL",
     description: "מה זה BackstageIL, למי הוא מיועד ומאיפה המידע מגיע.",

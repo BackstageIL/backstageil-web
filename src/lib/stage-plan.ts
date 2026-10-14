@@ -21,8 +21,23 @@ export interface StagePlan {
 const positive = (value: number | null | undefined): number | null =>
   typeof value === "number" && value > 0 ? value : null;
 
-/** The plan, or null when the stage width or depth is unknown. */
-export function stagePlan(hall: HallDocument): StagePlan | null {
+/** The measurements a plan is drawn from (a full hall document, or a hall summary). */
+export type PlanInput = Partial<
+  Pick<
+    HallDocument,
+    | "stage_width_m"
+    | "stage_depth_m"
+    | "proscenium_width_m"
+    | "first_pipe_distance_m"
+    | "foh_distance_m"
+  >
+>;
+
+/**
+ * The plan, or null when the stage width or depth is unknown. `textScale` enlarges the labels
+ * (and the room around the drawing) for small pictures such as link previews.
+ */
+export function stagePlan(hall: PlanInput, textScale = 1): StagePlan | null {
   const width = positive(hall.stage_width_m);
   const depth = positive(hall.stage_depth_m);
   if (width === null || depth === null) return null;
@@ -33,7 +48,7 @@ export function stagePlan(hall: HallDocument): StagePlan | null {
   const foh = positive(hall.foh_distance_m);
 
   const size = Math.max(width, depth + (foh ?? 0));
-  const text = size / 26;
+  const text = (size / 26) * textScale;
   const wallEnd = Math.max(width, proscenium ?? 0) / 2 + text * 1.5;
   const margin = text * 3.2;
   const houseDepth = foh !== null ? foh + text * 3.5 : text * 4;
