@@ -104,7 +104,7 @@ export const en = {
     button: "Donate on Ko-fi",
   },
   legal: {
-    updated: "Last updated: 10 October 2026",
+    updated: (date: string) => `Last updated: ${date}`,
     footer: {
       label: "Legal",
       terms: "Terms of use",
@@ -114,6 +114,7 @@ export const en = {
     // "{email}" in a paragraph becomes a link to the contact address
     terms: {
       title: "Terms of use",
+      date: "10 October 2026",
       description: "The terms for using BackstageIL, and how far you can rely on its information.",
       sections: [
         {
@@ -183,12 +184,13 @@ export const en = {
     },
     privacy: {
       title: "Privacy",
+      date: "14 October 2026",
       description: "What BackstageIL collects (very little) and how to reach us about it.",
       sections: [
         {
           heading: "The short version",
           paragraphs: [
-            "BackstageIL has no accounts, no forms, no ads, no analytics and no tracking cookies. We don't collect personal information through the site.",
+            "BackstageIL has no accounts, no forms, no ads and no cookies. We count visits anonymously, without identifying anyone, and don't collect personal information through the site.",
           ],
         },
         {
@@ -200,6 +202,7 @@ export const en = {
           paragraphs: [
             "Emails you send us: your address and what you write. We use them only to reply and to act on your request, such as a correction, and delete them when they're no longer needed.",
             "Technical logs: like any website, our hosting provider (Vercel) receives technical data such as your IP address and browser type to deliver the pages and keep the site secure. We don't use it to identify you. Error reports from our server (Sentry) contain no IP addresses or other personal details.",
+            "Visit counts: to see which pages are useful, we use Vercel Web Analytics. It uses no cookies and doesn't store your IP address. Each visit is turned into a one-way code that changes every day, so we see totals (pages viewed, the site you came from, country, type of device) but can't tell who you are or follow you from one day to the next.",
             "Your theme choice: if you switch between light and dark, the choice is saved in your own browser and never reaches us. You can clear it in your browser settings.",
           ],
         },
@@ -222,13 +225,14 @@ export const en = {
         {
           heading: "Changes",
           paragraphs: [
-            "If we ever add analytics or advertising, we'll update this page first and ask for your consent wherever the law requires it, before anything is collected.",
+            "If we ever add advertising or any tracking beyond the anonymous visit counts, we'll update this page first and ask for your consent wherever the law requires it, before anything is collected.",
           ],
         },
       ],
     },
     accessibility: {
       title: "Accessibility",
+      date: "10 October 2026",
       description:
         "How BackstageIL works for people with disabilities, and how to report a problem.",
       sections: [
