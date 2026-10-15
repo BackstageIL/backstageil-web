@@ -19,6 +19,7 @@ export const he: Strings = {
   site: {
     name: "BackstageIL",
     tagline: "מידע טכני על אולמות מופעים בישראל, לצוותי הפקה.",
+    homeTitle: "BackstageIL – מפרט טכני של אולמות ובמות בישראל",
   },
   nav: {
     venues: "אולמות",

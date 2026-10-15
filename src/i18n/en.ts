@@ -24,6 +24,8 @@ export const en = {
   site: {
     name: "BackstageIL",
     tagline: "Technical information about performance venues in Israel, for production crews.",
+    // The home page title in search results (says what the site is)
+    homeTitle: "BackstageIL: technical specs of performance venues in Israel",
   },
   nav: {
     venues: "Venues",
