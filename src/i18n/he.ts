@@ -436,6 +436,13 @@ export const he: Strings = {
     verified: "נבדק לאחרונה",
     correction: "משהו שגוי או חסר?",
     correctionLink: "הציעו תיקון",
+    missing: {
+      title: "עדיין לא ידוע על האולם הזה",
+      titleAll: "עדיין אין פרטים טכניים על האולם הזה",
+      stageSize: "מידות הבמה (רוחב × עומק)",
+      prompt: "עבדתם כאן?",
+      action: "שלחו את מה שאתם יודעים",
+    },
     checkWithVenue: "המידע עלול להיות חלקי או לא מעודכן. תאמו עם המקום לפני ההקמה.",
     termsLink: "תנאי שימוש",
   },

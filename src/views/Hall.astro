@@ -17,6 +17,7 @@ import {
 import Base from "../layouts/Base.astro";
 import type { HallDocument } from "../lib/api";
 import { extraLabel, hallSections } from "../lib/hall-sections";
+import { missingFacts, missingTemplate } from "../lib/missing";
 import { sendPath } from "../lib/send";
 import { hallCard, ogImagePath } from "../lib/og-image";
 import { hallJsonLd } from "../lib/structured-data";
@@ -70,6 +71,7 @@ const venueName = nameIn(locale, venue);
 const city = cityName(locale, venue.city);
 const where = `${hallName}, ${venueName}`;
 const description = t.description(where, city);
+const missing = missingFacts(hall, dictionary);
 const imagePath = ogImagePath(locale, { venue: venue.slug, hall: hall.slug });
 const jsonLd = hallJsonLd(locale, hall, Astro.site ?? "https://www.backstageil.com", imagePath);
 ---
@@ -99,6 +101,36 @@ const jsonLd = hallJsonLd(locale, hall, Astro.site ?? "https://www.backstageil.c
   <p class="mt-3 max-w-2xl text-sm text-muted">
     {t.checkWithVenue} <a href={localePath(locale, "/terms/")}>{t.termsLink}</a>
   </p>
+  {missing.labels.length > 0 && (
+    <aside
+      class="mt-5 max-w-2xl rounded border border-rule bg-sheet p-4"
+      aria-labelledby="missing-title"
+    >
+      <h2 id="missing-title" class="font-semibold">
+        {missing.all ? t.missing.titleAll : t.missing.title}
+      </h2>
+      <ul class="mt-2 flex flex-wrap gap-2">
+        {missing.labels.map((label) => (
+          <li class="rounded-full border border-dashed border-muted px-2.5 py-0.5 text-sm text-muted">
+            {label}
+          </li>
+        ))}
+      </ul>
+      <p class="mt-3 text-sm">
+        {t.missing.prompt}{" "}
+        <a
+          href={sendPath(locale, {
+            kind: "correction",
+            venue: venue.slug,
+            hall: hall.slug,
+            note: missingTemplate(missing),
+          })}
+        >
+          {t.missing.action}
+        </a>
+      </p>
+    </aside>
+  )}
 
   <div class="mt-6 grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-14">
     <aside class="lg:sticky lg:top-6 lg:self-start">

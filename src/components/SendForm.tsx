@@ -99,6 +99,7 @@ export default function SendForm({ venues, texts, apiUrl }: Props) {
   const [error, setError] = useState<SendError | null>(null);
   const [startedAt, setStartedAt] = useState(0);
   const [formKey, setFormKey] = useState(0);
+  const [note, setNote] = useState("");
 
   // The page is built without a URL: the starting choice (?kind=&venue=&hall=) is read once it
   // loads, along with the time the form was opened.
@@ -110,6 +111,7 @@ export default function SendForm({ venues, texts, apiUrl }: Props) {
       setVenue(target.venue);
       setHall(target.hall ?? "");
     }
+    setNote(target.note ? `${target.note}\n` : "");
     setStartedAt(Date.now());
     /* eslint-enable react-hooks/set-state-in-effect */
   }, [venues]);
@@ -269,12 +271,14 @@ export default function SendForm({ venues, texts, apiUrl }: Props) {
         </p>
         <textarea
           id="send-message"
+          key={note}
           name="message"
+          defaultValue={note}
           dir="auto"
           required
           minLength={3}
           maxLength={5000}
-          rows={5}
+          rows={Math.max(5, note.split("\n").length + 1)}
           aria-describedby="send-message-hint"
           className={field}
         />

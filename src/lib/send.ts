@@ -14,7 +14,11 @@ export interface SendTarget {
   kind?: Kind;
   venue?: string;
   hall?: string;
+  /** Text to start the message with (e.g. the facts a hall page is missing) */
+  note?: string;
 }
+
+const MAX_NOTE = 600;
 
 /** Link to the form, e.g. /he/send/?kind=photos&venue=habima-theater&hall=rovina-hall */
 export function sendPath(locale: Locale, target: SendTarget = {}): string {
@@ -22,6 +26,7 @@ export function sendPath(locale: Locale, target: SendTarget = {}): string {
   if (target.kind) params.set("kind", target.kind);
   if (target.venue) params.set("venue", target.venue);
   if (target.hall) params.set("hall", target.hall);
+  if (target.note) params.set("note", target.note.slice(0, MAX_NOTE));
   const query = params.toString();
   return localePath(locale, "/send/") + (query ? `?${query}` : "");
 }
@@ -36,6 +41,7 @@ export function readTarget(search: string): Required<Pick<SendTarget, "kind">> &
     kind: KINDS.includes(kind as Kind) ? (kind as Kind) : "correction",
     venue: slug(params.get("venue")),
     hall: slug(params.get("hall")),
+    note: params.get("note")?.slice(0, MAX_NOTE) || undefined,
   };
 }
 

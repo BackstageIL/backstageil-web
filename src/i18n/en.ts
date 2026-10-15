@@ -451,6 +451,14 @@ export const en = {
     verified: "Last verified",
     correction: "Something wrong or missing?",
     correctionLink: "Suggest a correction",
+    // The facts a hall page is still missing, and an invitation to send them (BSIL-61)
+    missing: {
+      title: "Not known yet for this hall",
+      titleAll: "No technical details for this hall yet",
+      stageSize: "Stage size (width × depth)",
+      prompt: "Worked here?",
+      action: "Send what you know",
+    },
     checkWithVenue:
       "Information may be incomplete or out of date. Confirm with the venue before load-in.",
     termsLink: "Terms of use",
