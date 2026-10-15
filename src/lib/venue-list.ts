@@ -118,10 +118,47 @@ export function cityOptions(venues: VenueListItem[], locale: Locale = "en"): Cit
   return [...cities.values()].sort(byNameIn(locale));
 }
 
-/** The venues matching the text and the city (all when none), then the one venue when chosen. */
-export function filterVenues(venues: VenueListItem[], city: string, venue: string, query = "") {
+/** Seat ranges for the filter: up to and including `max`, above `min`. */
+export const SEAT_RANGES = {
+  "300": { min: 0, max: 300 },
+  "700": { min: 300, max: 700 },
+  "1200": { min: 700, max: 1200 },
+  more: { min: 1200, max: Infinity },
+} as const;
+export type SeatRange = keyof typeof SEAT_RANGES;
+
+export interface ListFilters {
+  seats?: string;
+}
+
+/** True when the hall's seat count is in the chosen range (an unknown count never is). */
+export function hallMatches(hall: HallListItem, filters: ListFilters): boolean {
+  const range = SEAT_RANGES[filters.seats as SeatRange];
+  return !range || (hall.seats !== null && hall.seats > range.min && hall.seats <= range.max);
+}
+
+/** True when a filter on halls is set. */
+export const filtersHalls = (filters: ListFilters) =>
+  Boolean(SEAT_RANGES[filters.seats as SeatRange]);
+
+/**
+ * The venues matching the text and the city (all when none), then the one venue when chosen.
+ * With a seats filter, a venue shows only its halls that fit, and only if one does.
+ */
+export function filterVenues(
+  venues: VenueListItem[],
+  city: string,
+  venue: string,
+  query = "",
+  filters: ListFilters = {},
+) {
   const matching = query ? venues.filter((v) => matchesQuery(v, query)) : venues;
-  const inCity = city ? matching.filter((v) => v.city.slug === city) : matching;
+  const byHall = filtersHalls(filters)
+    ? matching
+        .map((v) => ({ ...v, halls: v.halls.filter((h) => hallMatches(h, filters)) }))
+        .filter((v) => v.halls.length > 0)
+    : matching;
+  const inCity = city ? byHall.filter((v) => v.city.slug === city) : byHall;
   const chosen = venue ? inCity.filter((v) => v.slug === venue) : inCity;
   return { venueOptions: inCity, shown: chosen.length ? chosen : inCity };
 }

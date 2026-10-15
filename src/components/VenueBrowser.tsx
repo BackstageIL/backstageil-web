@@ -1,13 +1,19 @@
 /**
- * Home page list with a free-text search and the City → Venue dropdowns. Rendered to HTML at
- * build time (the full list works without JavaScript and for search engines); the search and the
- * dropdowns filter it in the browser. The choice is kept in the URL (?q=&city=&venue=) so it can
- * be shared and survives "back".
+ * Home page list with a free-text search and the City → Venue → Seats dropdowns. Rendered to HTML at build time (the full list works without
+ * JavaScript and for search engines); the controls filter it in the browser. The choice is kept in
+ * the URL (?q=&city=&venue=&seats=) so it can be shared and survives "back".
  */
 import { useEffect, useMemo, useState } from "react";
 
 import { localePath, strings, type Locale } from "../i18n";
-import { cityOptions, filterVenues, outlineScale, type VenueListItem } from "../lib/venue-list";
+import {
+  SEAT_RANGES,
+  cityOptions,
+  filterVenues,
+  filtersHalls,
+  outlineScale,
+  type VenueListItem,
+} from "../lib/venue-list";
 import HallRow, { OUTLINE_HEIGHT, OUTLINE_WIDTH } from "./HallRow";
 
 interface Props {
@@ -18,7 +24,8 @@ interface Props {
 export default function VenueBrowser({ venues, locale }: Props) {
   const dictionary = strings(locale);
   const t = dictionary.home;
-  const [{ query, city, venue }, setChoice] = useState({ query: "", city: "", venue: "" });
+  const [choice, setChoice] = useState(EMPTY);
+  const { query, city, venue, seats } = choice;
 
   // The page is built without a URL, so a shared choice (?city=&venue=) is restored once it
   // loads. Reading it during the first render would make it differ from the built HTML.
@@ -29,22 +36,25 @@ export default function VenueBrowser({ venues, locale }: Props) {
       query: params.get("q") ?? "",
       city: params.get("city") ?? "",
       venue: params.get("venue") ?? "",
+      seats: params.get("seats") ?? "",
     });
   }, []);
 
-  const choose = (next: { query: string; city: string; venue: string }) => {
+  const choose = (changes: Partial<Choice>) => {
+    const next = { ...choice, ...changes };
     setChoice(next);
     const params = new URLSearchParams();
-    if (next.query) params.set("q", next.query);
-    if (next.city) params.set("city", next.city);
-    if (next.venue) params.set("venue", next.venue);
-    const query = params.toString();
-    history.replaceState(null, "", query ? `?${query}` : location.pathname);
+    for (const [key, value] of Object.entries(next)) {
+      if (value) params.set(key === "query" ? "q" : key, value);
+    }
+    const search = params.toString();
+    history.replaceState(null, "", search ? `?${search}` : location.pathname);
   };
 
   const cities = useMemo(() => cityOptions(venues, locale), [venues, locale]);
   const scale = useMemo(() => outlineScale(venues, OUTLINE_WIDTH, OUTLINE_HEIGHT), [venues]);
-  const { venueOptions, shown } = filterVenues(venues, city, venue, query);
+  const filters = { seats };
+  const { venueOptions, shown } = filterVenues(venues, city, venue, query, filters);
 
   return (
     <div>
@@ -59,16 +69,16 @@ export default function VenueBrowser({ venues, locale }: Props) {
           autoComplete="off"
           value={query}
           placeholder={t.searchPlaceholder}
-          onChange={(event) => choose({ query: event.target.value, city, venue: "" })}
+          onChange={(event) => choose({ query: event.target.value, venue: "" })}
           className="mt-1 w-full rounded border border-rule bg-sheet px-3 py-2.5 text-ink"
         />
       </div>
-      <div className="mt-3 grid gap-3 sm:grid-cols-2 sm:gap-4">
+      <div className="mt-3 grid gap-3 sm:grid-cols-3 sm:gap-4">
         <Select
           id="city"
           label={t.city}
           value={city}
-          onChange={(value) => choose({ query, city: value, venue: "" })}
+          onChange={(value) => choose({ city: value, venue: "" })}
           options={[
             { value: "", label: t.allCities },
             ...cities.map((c) => ({ value: c.slug, label: `${c.name} (${c.count})` })),
@@ -78,16 +88,30 @@ export default function VenueBrowser({ venues, locale }: Props) {
           id="venue"
           label={t.venue}
           value={venue}
-          onChange={(value) => choose({ query, city, venue: value })}
+          onChange={(value) => choose({ venue: value })}
           options={[
             { value: "", label: t.allVenues },
             ...venueOptions.map((v) => ({ value: v.slug, label: v.name })),
+          ]}
+        />
+        <Select
+          id="seats"
+          label={t.seatsFilter}
+          value={seats}
+          onChange={(value) => choose({ seats: value, venue: "" })}
+          options={[
+            { value: "", label: t.anySeats },
+            ...Object.keys(SEAT_RANGES).map((range) => ({
+              value: range,
+              label: t.seatRanges[range as keyof typeof t.seatRanges],
+            })),
           ]}
         />
       </div>
 
       <p className="mt-6 text-sm text-muted" aria-live="polite">
         {t.count(shown.length)}
+        {filtersHalls(filters) && <span className="block">{t.knownOnly}</span>}
       </p>
 
       <ul className="mt-2 border-t border-rule">
@@ -119,6 +143,15 @@ export default function VenueBrowser({ venues, locale }: Props) {
     </div>
   );
 }
+
+interface Choice {
+  query: string;
+  city: string;
+  venue: string;
+  seats: string;
+}
+
+const EMPTY: Choice = { query: "", city: "", venue: "", seats: "" };
 
 interface SelectProps {
   id: string;
