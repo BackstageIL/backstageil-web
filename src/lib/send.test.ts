@@ -70,3 +70,18 @@ describe("sendTexts", () => {
     }
   });
 });
+
+describe("note", () => {
+  it("goes into the form link and back out, length-capped", async () => {
+    const { readTarget, sendPath } = await import("./send");
+    const path = sendPath("he", {
+      kind: "correction",
+      venue: "habima-theater",
+      hall: "rovina-hall",
+      note: "גובה הגריד: \nמעגלי חשמל: ",
+    });
+    expect(readTarget(path.split("?")[1]).note).toBe("גובה הגריד: \nמעגלי חשמל: ");
+    expect(readTarget("note=" + "x".repeat(2000)).note).toHaveLength(600);
+    expect(readTarget("kind=photos").note).toBeUndefined();
+  });
+});
