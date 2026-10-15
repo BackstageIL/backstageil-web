@@ -51,6 +51,11 @@ export const en = {
     seats: (n: number) => `${n.toLocaleString("en-GB")} seats`,
     stage: (width: string, depth: string) => `Stage ${width} × ${depth}`,
     outline: "Stage outline, all drawn to the same scale",
+    // Seats filter next to City/Venue (BSIL-62); a venue shows when one of its halls fits
+    seatsFilter: "Seats",
+    anySeats: "Any",
+    seatRanges: { "300": "Up to 300", "700": "300–700", "1200": "700–1,200", more: "Over 1,200" },
+    knownOnly: "Halls without a known seat count are not shown.",
   },
   contact: {
     title: "Contact",

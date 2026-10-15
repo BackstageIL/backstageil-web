@@ -44,6 +44,10 @@ export const he: Strings = {
     seats: (n: number) => `${n.toLocaleString("he-IL")} מושבים`,
     stage: (width: string, depth: string) => `במה ${width} × ${depth}`,
     outline: "קווי המתאר של הבמה, כולם באותו קנה מידה",
+    seatsFilter: "מושבים",
+    anySeats: "הכל",
+    seatRanges: { "300": "עד 300", "700": "300–700", "1200": "700–1,200", more: "מעל 1,200" },
+    knownOnly: "אולמות בלי מספר מושבים ידוע לא מוצגים.",
   },
   contact: {
     title: "צור קשר",

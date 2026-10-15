@@ -4,6 +4,8 @@ import type { VenueDetail } from "./api";
 import {
   cityOptions,
   filterVenues,
+  filtersHalls,
+  hallMatches,
   matchesQuery,
   normalize,
   outlineScale,
@@ -167,5 +169,44 @@ describe("text search", () => {
     ).toEqual(["beit-haam", "zeta-hall"]);
     expect(filterVenues(all, "haifa", "", "hall").shown.map((v) => v.slug)).toEqual(["zeta-hall"]);
     expect(filterVenues(all, "", "", "nothing like this").shown).toEqual([]);
+  });
+});
+
+describe("hall filters", () => {
+  const hall = (seats: number | null, width: number | null, depth: number | null) => ({
+    slug: "h",
+    name: "h",
+    seats,
+    width,
+    depth,
+  });
+
+  it("matches seat ranges by their upper bound, and never an unknown count", () => {
+    expect(hallMatches(hall(300, null, null), { seats: "300" })).toBe(true);
+    expect(hallMatches(hall(301, null, null), { seats: "300" })).toBe(false);
+    expect(hallMatches(hall(301, null, null), { seats: "700" })).toBe(true);
+    expect(hallMatches(hall(1500, null, null), { seats: "more" })).toBe(true);
+    expect(hallMatches(hall(null, null, null), { seats: "more" })).toBe(false);
+  });
+
+  it("ignores a range that is not on the list (e.g. an edited link)", () => {
+    expect(hallMatches(hall(null, null, null), { seats: "42" })).toBe(true);
+    expect(filtersHalls({ seats: "42" })).toBe(false);
+  });
+
+  it("shows a venue only with its halls that fit every filter", () => {
+    const list = toListItems([
+      {
+        ...venue("gamma", "haifa", []),
+        halls: [
+          { slug: "a", name: "a", capacity_seated: 900, stage_width_m: 16, stage_depth_m: 12 },
+          { slug: "b", name: "b", capacity_seated: 200, stage_width_m: 16, stage_depth_m: 12 },
+        ],
+      } as VenueDetail,
+      venue("zeta-hall", "haifa", [["main", 14, 11]]),
+    ]);
+    const { shown } = filterVenues(list, "", "", "", { seats: "1200" });
+    expect(shown.map((v) => [v.slug, v.halls.map((h) => h.slug)])).toEqual([["gamma", ["a"]]]);
+    expect(filterVenues(list, "", "", "", {}).shown).toHaveLength(2);
   });
 });
