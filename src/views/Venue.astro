@@ -6,6 +6,7 @@ import Nearby from "../components/Nearby.astro";
 import { cityName, nameIn, streetAddress, strings, type Locale } from "../i18n";
 import Base from "../layouts/Base.astro";
 import { ogImagePath, venueCard } from "../lib/og-image";
+import { venueJsonLd } from "../lib/structured-data";
 import { api } from "../lib/site-api";
 import { outlineScale, toListItems } from "../lib/venue-list";
 
@@ -29,13 +30,16 @@ const name = nameIn(locale, venue);
 const city = cityName(locale, venue.city);
 const street = streetAddress(locale, venue);
 const where = [name, street, city];
+const imagePath = ogImagePath(locale, { venue: venue.slug });
+const jsonLd = venueJsonLd(locale, venue, Astro.site ?? "https://www.backstageil.com", imagePath);
 ---
 
 <Base
   title={name}
   description={t.description(name, city)}
   locale={locale}
-  image={{ path: ogImagePath(locale, { venue: venue.slug }), alt: venueCard(locale, venue).alt }}
+  image={{ path: imagePath, alt: venueCard(locale, venue).alt }}
+  jsonLd={jsonLd}
 >
   <p class="text-sm text-muted">{dictionary.venueType[venue.venue_type]}</p>
   <h1 class="font-stencil mt-1 max-w-4xl text-4xl leading-tight font-bold sm:text-5xl">{name}</h1>

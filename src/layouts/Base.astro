@@ -5,6 +5,7 @@ import LanguageMenu from "../components/LanguageMenu.astro";
 import ThemeToggle from "../components/ThemeToggle.astro";
 import { localePath, pathWithoutLocale, strings, type Locale } from "../i18n";
 import { OG_HEIGHT, OG_WIDTH, ogImagePath } from "../lib/og-image";
+import { jsonLdText, type JsonLd } from "../lib/structured-data";
 
 interface Props {
   title: string;
@@ -13,11 +14,13 @@ interface Props {
   noindex?: boolean;
   /** The link preview picture (`/og/...`) and its description; the site's own card by default */
   image?: { path: string; alt: string };
+  /** schema.org structured data for search engines (see lib/structured-data.ts) */
+  jsonLd?: JsonLd[];
 }
 
 const { title, description, locale, noindex = false } = Astro.props;
 const t = strings(locale);
-const fullTitle = title === t.site.name ? title : `${title} | ${t.site.name}`;
+const fullTitle = title.includes(t.site.name) ? title : `${title} | ${t.site.name}`;
 const path = Astro.url.pathname;
 const canonical = new URL(path, Astro.site);
 const basePath = pathWithoutLocale(path);
@@ -65,6 +68,9 @@ const legalLinks = (["terms", "privacy", "accessibility"] as const).map((page) =
     <meta property="og:image:height" content={String(OG_HEIGHT)} />
     <meta property="og:image:alt" content={image.alt} />
     <meta name="twitter:card" content="summary_large_image" />
+    {(Astro.props.jsonLd ?? []).map((data) => (
+      <script is:inline type="application/ld+json" set:html={jsonLdText(data)} />
+    ))}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <script is:inline>
