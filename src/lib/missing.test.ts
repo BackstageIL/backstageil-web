@@ -31,6 +31,15 @@ describe("missingFacts", () => {
     );
   });
 
+  it("counts a zero as known, and blank text as unknown", () => {
+    const labels = missingFacts(
+      hall({ dressing_rooms: 0, load_in_notes: "  " }),
+      strings("en"),
+    ).labels;
+    expect(labels).not.toContain(strings("en").fields.dressing_rooms);
+    expect(labels).toContain(strings("en").fields.load_in_notes);
+  });
+
   it("is empty when every key fact is known", () => {
     const full = hall({
       stage_width_m: 20,

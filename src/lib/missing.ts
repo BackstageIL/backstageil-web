@@ -7,8 +7,13 @@ import type { HallDocument } from "./api";
 
 type Field = keyof Strings["fields"];
 
-/** Known: a value, or a list with something in it (power circuits are a list). */
-const has = (value: unknown) => (Array.isArray(value) ? value.length > 0 : Boolean(value));
+/** Known: a value (0 counts: "no dressing rooms" is a fact), text that is not blank, or a list with
+ * something in it (power circuits are a list). */
+const has = (value: unknown) => {
+  if (Array.isArray(value)) return value.length > 0;
+  if (typeof value === "string") return value.trim() !== "";
+  return value !== null && value !== undefined;
+};
 
 /** The facts crews ask for first, in the order they plan a load-in. */
 const KEY_FACTS: { key: Field | "stage_size"; known: (hall: HallDocument) => boolean }[] = [
