@@ -32,6 +32,7 @@ type State = "closed" | "loading" | "open" | "failed";
 export default function Stage3D({ model, labels, texts, description }: Props) {
   const [state, setState] = useState<State>("closed");
   const box = useRef<HTMLDivElement>(null);
+  const figure = useRef<HTMLElement>(null);
   const stage = useRef<MountedStage | null>(null);
 
   useEffect(() => {
@@ -50,6 +51,33 @@ export default function Stage3D({ model, labels, texts, description }: Props) {
   }, [state, model, labels]);
 
   useEffect(() => () => stage.current?.dispose(), []);
+
+  // On a laptop the plan's column is sticky (pinned by its top). With the 3D open it is taller than
+  // the screen, so the 3D and its buttons would stay below the screen until the end of the page
+  // (BSIL-70). While it is open, pin the column by its bottom edge instead (a negative top), and on
+  // opening scroll just enough to show the whole 3D. No inner scrollbar: it would fight the zoom.
+  const shown = state !== "closed";
+  useEffect(() => {
+    const view = figure.current;
+    const column = view?.closest("aside");
+    if (!shown || !view || !column) return;
+    const gap = 24; // the column's usual top offset
+    const fit = () => {
+      const room = window.innerHeight - column.offsetHeight - gap;
+      column.style.top = room < gap ? `${room}px` : "";
+    };
+    fit();
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    view.scrollIntoView({ block: "nearest", behavior: reduce ? "auto" : "smooth" });
+    const resized = new ResizeObserver(fit);
+    resized.observe(column);
+    window.addEventListener("resize", fit);
+    return () => {
+      resized.disconnect();
+      window.removeEventListener("resize", fit);
+      column.style.top = "";
+    };
+  }, [shown]);
 
   const close = () => {
     stage.current?.dispose();
@@ -76,7 +104,7 @@ export default function Stage3D({ model, labels, texts, description }: Props) {
   }
 
   return (
-    <figure className="mt-3">
+    <figure ref={figure} className="mt-3">
       <div
         ref={box}
         role="img"
