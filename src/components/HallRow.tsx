@@ -9,6 +9,11 @@ import type { HallListItem } from "../lib/venue-list";
 // Box for the stage outlines: the widest and deepest stages of all halls fit it, one scale for all
 export const OUTLINE_WIDTH = 112;
 export const OUTLINE_HEIGHT = 84;
+// Room around the stages so the biggest one's border isn't cut by the box edge (BSIL-73)
+const OUTLINE_PAD = 3;
+/** The area the shared scale fits the stages into: the box minus its padding */
+export const OUTLINE_INNER_WIDTH = OUTLINE_WIDTH - 2 * OUTLINE_PAD;
+export const OUTLINE_INNER_HEIGHT = OUTLINE_HEIGHT - 2 * OUTLINE_PAD;
 
 interface Props {
   venue: string;
@@ -68,7 +73,7 @@ function StageOutline({
   const w = width * scale;
   const d = depth * scale;
   const x = (boxWidth - w) / 2;
-  const y = boxHeight - d - 1;
+  const y = boxHeight - OUTLINE_PAD - d;
   return (
     <svg
       width={boxWidth}
@@ -87,7 +92,13 @@ function StageOutline({
         stroke="var(--ink)"
         strokeWidth={1.5}
       />
-      <rect x={boxWidth / 2 - 3} y={boxHeight - 4.5} width={6} height={2} fill="var(--spike)" />
+      <rect
+        x={boxWidth / 2 - 3}
+        y={boxHeight - OUTLINE_PAD - 3.5}
+        width={6}
+        height={2}
+        fill="var(--spike)"
+      />
     </svg>
   );
 }
