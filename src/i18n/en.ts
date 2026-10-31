@@ -380,6 +380,7 @@ export const en = {
     waze: "Navigate with Waze",
     website: "Venue website",
     halls: "Halls",
+    photoAlt: (name: string) => `The building of ${name}`,
     nearby: "Nearby",
     sponsored: "Sponsored",
     distance: (value: number, unit: "m" | "km") => `${value} ${unit} away`,

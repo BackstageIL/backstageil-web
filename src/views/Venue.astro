@@ -26,6 +26,8 @@ const scale = outlineScale(all, OUTLINE_WIDTH, OUTLINE_HEIGHT); // same scale as
 const venue = await api.venue(slug);
 const item = all.find((v) => v.slug === slug);
 const places = await api.recommendations(slug);
+// The venue's own photo (BSIL-71): the first one, beside the title; none, and the page is as before
+const photo = (await api.venuePictures(slug))[0];
 const name = nameIn(locale, venue);
 const city = cityName(locale, venue.city);
 const street = streetAddress(locale, venue);
@@ -41,24 +43,51 @@ const jsonLd = venueJsonLd(locale, venue, Astro.site ?? "https://www.backstageil
   image={{ path: imagePath, alt: venueCard(locale, venue).alt }}
   jsonLd={jsonLd}
 >
-  <p class="text-sm text-muted">{dictionary.venueType[venue.venue_type]}</p>
-  <h1 class="font-stencil mt-1 max-w-4xl text-4xl leading-tight font-bold sm:text-5xl">{name}</h1>
-  <!-- The address reads in the direction of its first word (English street: left-to-right, Hebrew: right-to-left) -->
-  <p class="mt-2" dir="auto">
-    {street && `${street}, `}
-    {city}
-    {venue.city.district && (
-      <span class="text-muted">, {dictionary.district[venue.city.district]}</span>
+  <div
+    class:list={[
+      "grid grid-cols-1 items-start gap-6",
+      photo && "lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)]",
+    ]}
+  >
+    <div>
+      <p class="text-sm text-muted">{dictionary.venueType[venue.venue_type]}</p>
+      <h1 class="font-stencil mt-1 max-w-4xl text-4xl leading-tight font-bold sm:text-5xl">
+        {name}
+      </h1>
+      <!-- The address reads in the direction of its first word (English street: left-to-right, Hebrew: right-to-left) -->
+      <p class="mt-2" dir="auto">
+        {street && `${street}, `}
+        {city}
+        {venue.city.district && (
+          <span class="text-muted">, {dictionary.district[venue.city.district]}</span>
+        )}
+      </p>
+      <div class="mt-4">
+        <NavigateButton locale={locale} where={where}>
+          {venue.website && (
+            <a href={venue.website} rel="noopener" class="text-sm">
+              {t.website}
+            </a>
+          )}
+        </NavigateButton>
+      </div>
+    </div>
+    {photo && (
+      <figure>
+        <img
+          src={photo.url}
+          width={photo.width}
+          height={photo.height}
+          alt={t.photoAlt(name)}
+          class="aspect-[4/3] w-full rounded-lg border border-rule object-cover"
+        />
+        {photo.caption && (
+          <figcaption class="mt-1.5 text-xs text-muted">
+            <bdi>{photo.caption}</bdi>
+          </figcaption>
+        )}
+      </figure>
     )}
-  </p>
-  <div class="mt-4">
-    <NavigateButton locale={locale} where={where}>
-      {venue.website && (
-        <a href={venue.website} rel="noopener" class="text-sm">
-          {t.website}
-        </a>
-      )}
-    </NavigateButton>
   </div>
 
   <div class="mt-10 grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">

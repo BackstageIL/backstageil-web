@@ -88,6 +88,8 @@ export function createApi(baseUrl: string, options: ApiOptions = {}) {
       get<HallDocument>(`/venues/${slug(venueSlug)}/halls/${slug(hallSlug)}`),
     pictures: (venueSlug: string, hallSlug: string) =>
       get<Picture[]>(`/venues/${slug(venueSlug)}/halls/${slug(hallSlug)}/pictures`),
+    /** The venue's own photos (the building, the entrance); hall pictures are listed per hall */
+    venuePictures: (venueSlug: string) => get<Picture[]>(`/venues/${slug(venueSlug)}/pictures`),
     recommendations: (venueSlug: string) =>
       get<Recommendation[]>(`/venues/${slug(venueSlug)}/recommendations`),
   };

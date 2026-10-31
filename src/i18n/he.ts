@@ -364,6 +364,7 @@ export const he: Strings = {
     waze: "ניווט ב-Waze",
     website: "אתר המקום",
     halls: "אולמות",
+    photoAlt: (name: string) => `הבניין של ${name}`,
     nearby: "בסביבה",
     sponsored: "ממומן",
     distance: (value: number, unit: "m" | "km") => `${value} ${unit === "m" ? "מ׳" : "ק״מ"} מכאן`,
