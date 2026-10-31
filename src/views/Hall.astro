@@ -9,7 +9,7 @@ import {
   cityName,
   localePath,
   nameIn,
-  sourceIn,
+  sourceParts,
   streetAddress,
   strings,
   type Locale,
@@ -74,6 +74,7 @@ const description = t.description(where, city);
 const missing = missingFacts(hall, dictionary);
 const imagePath = ogImagePath(locale, { venue: venue.slug, hall: hall.slug });
 const jsonLd = hallJsonLd(locale, hall, Astro.site ?? "https://www.backstageil.com", imagePath);
+const sources = hall.source ? sourceParts(locale, hall.source) : [];
 ---
 
 <Base
@@ -253,10 +254,22 @@ const jsonLd = hallJsonLd(locale, hall, Astro.site ?? "https://www.backstageil.c
       </section>
 
       <footer class="mt-12 border-t border-rule pt-4 text-sm text-muted">
-        {hall.source && (
+        {sources.length === 1 && (
           <p>
-            {t.source}: <span dir="auto">{sourceIn(locale, hall.source)}</span>
+            {t.source}: <bdi>{sources[0]}</bdi>
           </p>
+        )}
+        {sources.length > 1 && (
+          <div>
+            <p>{t.source}:</p>
+            <ul class="list-disc ps-5">
+              {sources.map((part) => (
+                <li>
+                  <bdi>{part}</bdi>
+                </li>
+              ))}
+            </ul>
+          </div>
         )}
         {verified && (
           <p>

@@ -55,7 +55,7 @@ const SOURCE_HE: [RegExp, string][] = [
   [/Online research/g, "מחקר ברשת"],
   [/Site survey/g, "סקר באולם"],
   [/surveyor's drawings/g, "תוכניות מודד"],
-  [/; stage measurements not yet confirmed with the venue/g, "; מידות הבמה טרם אושרו מול המקום"],
+  [/stage measurements not yet confirmed with the venue/g, "מידות הבמה טרם אושרו מול המקום"],
 ];
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const MONTHS_HE = [
@@ -82,6 +82,23 @@ export function sourceIn(locale: Locale, source: string): string {
     (_, m: string, y: string) => `(${MONTHS_HE[MONTHS.indexOf(m)]} ${y})`,
   );
   return text;
+}
+
+/** A hall's sources one per item (the API joins them with "; "), so a list can give every part its own
+ * line: one line mixing Hebrew and English scrambles on Hebrew pages. On Hebrew pages a part is translated
+ * only when its phrase is known (dates too); an untranslated part stays all English, date included. */
+export function sourceParts(locale: Locale, source: string): string[] {
+  return source
+    .split(/;\s*/)
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .map((part) => {
+      if (locale !== "he") return part;
+      const translated = sourceIn(locale, part);
+      return SOURCE_HE.some(([pattern]) => new RegExp(pattern.source).test(part))
+        ? translated
+        : part;
+    });
 }
 
 /** City name in the page language (the API sends both). */

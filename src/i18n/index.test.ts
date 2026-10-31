@@ -10,6 +10,7 @@ import {
   nameIn,
   pathWithoutLocale,
   sourceIn,
+  sourceParts,
   streetAddress,
   strings,
 } from ".";
@@ -85,6 +86,26 @@ describe("names", () => {
       "2 Tarsat Blvd",
     );
     expect(streetAddress("he", { street_address: null, street_address_he: null })).toBeNull();
+  });
+
+  it("splits a source into one part per item, translated on Hebrew pages", () => {
+    const source =
+      "Site survey (Dec 2024); Venue technical documents via a production manager (Oct 2026)";
+    expect(sourceParts("en", source)).toEqual([
+      "Site survey (Dec 2024)",
+      "Venue technical documents via a production manager (Oct 2026)",
+    ]);
+    expect(sourceParts("he", source)).toEqual([
+      "סקר באולם (דצמבר 2024)",
+      "Venue technical documents via a production manager (Oct 2026)",
+    ]);
+    expect(
+      sourceParts(
+        "he",
+        "Online research (Oct 2026); stage measurements not yet confirmed with the venue",
+      ),
+    ).toEqual(["מחקר ברשת (אוקטובר 2026)", "מידות הבמה טרם אושרו מול המקום"]);
+    expect(sourceParts("he", "Online research (Oct 2026)")).toEqual(["מחקר ברשת (אוקטובר 2026)"]);
   });
 
   it("translates known source phrases on Hebrew pages and keeps the rest", () => {
