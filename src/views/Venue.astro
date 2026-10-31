@@ -1,6 +1,6 @@
 ---
 /** A venue: address and map, its halls (same outlines as the home list), and places nearby. */
-import HallRow, { OUTLINE_HEIGHT, OUTLINE_WIDTH } from "../components/HallRow";
+import HallRow, { OUTLINE_INNER_HEIGHT, OUTLINE_INNER_WIDTH } from "../components/HallRow";
 import NavigateButton from "../components/NavigateButton.astro";
 import Nearby from "../components/Nearby.astro";
 import { cityName, nameIn, streetAddress, strings, type Locale } from "../i18n";
@@ -22,7 +22,7 @@ const all = toListItems(
   await Promise.all((await api.listVenues()).map((venue) => api.venue(venue.slug))),
   locale,
 );
-const scale = outlineScale(all, OUTLINE_WIDTH, OUTLINE_HEIGHT); // same scale as the home list
+const scale = outlineScale(all, OUTLINE_INNER_WIDTH, OUTLINE_INNER_HEIGHT); // same scale as the home list
 const venue = await api.venue(slug);
 const item = all.find((v) => v.slug === slug);
 const places = await api.recommendations(slug);

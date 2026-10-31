@@ -14,7 +14,7 @@ import {
   outlineScale,
   type VenueListItem,
 } from "../lib/venue-list";
-import HallRow, { OUTLINE_HEIGHT, OUTLINE_WIDTH } from "./HallRow";
+import HallRow, { OUTLINE_INNER_HEIGHT, OUTLINE_INNER_WIDTH } from "./HallRow";
 
 interface Props {
   venues: VenueListItem[];
@@ -52,7 +52,10 @@ export default function VenueBrowser({ venues, locale }: Props) {
   };
 
   const cities = useMemo(() => cityOptions(venues, locale), [venues, locale]);
-  const scale = useMemo(() => outlineScale(venues, OUTLINE_WIDTH, OUTLINE_HEIGHT), [venues]);
+  const scale = useMemo(
+    () => outlineScale(venues, OUTLINE_INNER_WIDTH, OUTLINE_INNER_HEIGHT),
+    [venues],
+  );
   const filters = { seats };
   const { venueOptions, shown } = filterVenues(venues, city, venue, query, filters);
 
