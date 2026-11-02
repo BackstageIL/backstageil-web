@@ -17,7 +17,8 @@ npm run gen:api       # regenerate src/lib/api-types.ts after API schema changes
 ## Layout and conventions
 
 - `src/pages/` routes (file = URL); dynamic routes use `getStaticPaths()` from the API.
-- `src/lib/api.ts` typed, memoized, retrying API client (testable without Astro);
+- `src/lib/api.ts` typed, retrying API client (testable without Astro): a build makes one call,
+  the site snapshot, and every method reads from it;
   `src/lib/site-api.ts` the instance for this build (`API_URL` from `astro:env`).
 - `src/lib/api-types.ts` is generated from the API's OpenAPI schema: never edit by hand.
 - React only where the page needs interactivity (islands with `client:*`); everything else is

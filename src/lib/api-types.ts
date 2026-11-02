@@ -122,6 +122,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/venues/{venue_slug}/pictures": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Venue pictures
+         * @description Pictures of the venue itself (the building, the entrance), in display order; hall pictures are listed per hall. Captions carry the photographer credit a free license requires.
+         */
+        get: operations["list_venue_pictures_api_v1_venues__venue_slug__pictures_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/venues/{venue_slug}/recommendations": {
         parameters: {
             query?: never;
@@ -156,6 +176,46 @@ export interface paths {
         get: operations["list_cities_api_v1_cities_get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/site/snapshot": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * All published data in one response
+         * @description What the website build reads: every venue with its halls, pictures and recommendations, in the same shapes as the per-item endpoints.
+         */
+        get: operations["get_site_snapshot_api_v1_site_snapshot_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/submissions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Send information about a venue
+         * @description Multipart form from the website. Nothing is published: the admin reviews every submission. Up to 5 files and 4 MB in total (photos, PDF, Word, Excel); photos are stored without metadata. The message and venue name must not contain phone numbers or email addresses; contact details are optional.
+         */
+        post: operations["submit_api_v1_submissions_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -399,6 +459,48 @@ export interface paths {
         patch: operations["patch_picture_api_v1_admin_venues__venue_slug__halls__hall_slug__pictures__picture_id__patch"];
         trace?: never;
     };
+    "/api/v1/admin/venues/{venue_slug}/pictures": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Venue pictures (admin view) */
+        get: operations["list_venue_pictures_api_v1_admin_venues__venue_slug__pictures_get"];
+        put?: never;
+        /**
+         * Upload a venue picture (the building, the entrance)
+         * @description Same processing as hall pictures (JPEG, PNG or WebP, max 4 MB, stored as WebP without metadata). Up to 10 per venue; new pictures go last. Put the photographer credit a free license requires in the caption.
+         */
+        post: operations["upload_venue_picture_api_v1_admin_venues__venue_slug__pictures_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/venues/{venue_slug}/pictures/{picture_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete a venue picture permanently (row and files) */
+        delete: operations["delete_venue_picture_api_v1_admin_venues__venue_slug__pictures__picture_id__delete"];
+        options?: never;
+        head?: never;
+        /**
+         * Edit a venue picture's caption or display order
+         * @description Only the fields sent are changed; caption null clears it.
+         */
+        patch: operations["patch_venue_picture_api_v1_admin_venues__venue_slug__pictures__picture_id__patch"];
+        trace?: never;
+    };
     "/api/v1/admin/venues/{venue_slug}/recommendations": {
         parameters: {
             query?: never;
@@ -439,6 +541,62 @@ export interface paths {
          * @description Only the fields sent are changed; null clears an optional field. is_active=false hides it from the public list without deleting it.
          */
         patch: operations["patch_recommendation_api_v1_admin_venues__venue_slug__recommendations__recommendation_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/admin/submissions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Submissions from the website, newest first */
+        get: operations["list_submissions_api_v1_admin_submissions_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/submissions/{submission_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** One submission */
+        get: operations["get_submission_api_v1_admin_submissions__submission_id__get"];
+        put?: never;
+        post?: never;
+        /** Delete a submission and its files */
+        delete: operations["delete_submission_api_v1_admin_submissions__submission_id__delete"];
+        options?: never;
+        head?: never;
+        /**
+         * Mark a submission handled, rejected or new
+         * @description Handled or rejected clears the sender's contact details.
+         */
+        patch: operations["patch_submission_api_v1_admin_submissions__submission_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/admin/submissions/{submission_id}/files/{file_index}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Download a submitted file (from the private store) */
+        get: operations["download_submission_file_api_v1_admin_submissions__submission_id__files__file_index__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
 }
@@ -638,6 +796,36 @@ export interface components {
              */
             updated_at: string;
         };
+        /** AdminSubmission */
+        AdminSubmission: {
+            /** Id */
+            id: number;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            kind: components["schemas"]["SubmissionKind"];
+            /** Venue Slug */
+            venue_slug: string | null;
+            /** Hall Slug */
+            hall_slug: string | null;
+            /** Venue Name */
+            venue_name: string | null;
+            /** Message */
+            message: string;
+            /** Contact Name */
+            contact_name: string | null;
+            /** Contact Email */
+            contact_email: string | null;
+            /** Files */
+            files: components["schemas"]["SubmissionFile"][];
+            status: components["schemas"]["SubmissionStatus"];
+            /** Notified */
+            notified: boolean;
+            /** Handled At */
+            handled_at: string | null;
+        };
         /** AdminVenueDetail */
         AdminVenueDetail: {
             /** Slug */
@@ -689,8 +877,57 @@ export interface components {
             /** Is Published */
             is_published: boolean;
         };
+        /** Body_submit_api_v1_submissions_post */
+        Body_submit_api_v1_submissions_post: {
+            /** Kind */
+            kind: string;
+            /** Message */
+            message: string;
+            /**
+             * Rights
+             * @description Must be true
+             */
+            rights?: string | null;
+            /** Venue */
+            venue?: string | null;
+            /** Hall */
+            hall?: string | null;
+            /** Venue Name */
+            venue_name?: string | null;
+            /** Contact Name */
+            contact_name?: string | null;
+            /** Contact Email */
+            contact_email?: string | null;
+            /**
+             * Website
+             * @description Leave empty
+             * @default
+             */
+            website: string;
+            /**
+             * Started At
+             * @description When the form was opened (ms)
+             */
+            started_at?: number | null;
+            /**
+             * Files
+             * @description Optional files
+             * @default []
+             */
+            files: string[];
+        };
         /** Body_upload_picture_api_v1_admin_venues__venue_slug__halls__hall_slug__pictures_post */
         Body_upload_picture_api_v1_admin_venues__venue_slug__halls__hall_slug__pictures_post: {
+            /**
+             * File
+             * @description JPEG, PNG or WebP, max 4 MB
+             */
+            file: string;
+            /** Caption */
+            caption?: string | null;
+        };
+        /** Body_upload_venue_picture_api_v1_admin_venues__venue_slug__pictures_post */
+        Body_upload_venue_picture_api_v1_admin_venues__venue_slug__pictures_post: {
             /**
              * File
              * @description JPEG, PNG or WebP, max 4 MB
@@ -1241,6 +1478,12 @@ export interface components {
             /** Is Active */
             is_active?: boolean | null;
         };
+        /** SiteHall */
+        SiteHall: {
+            document: components["schemas"]["HallDocument"];
+            /** Pictures */
+            pictures: components["schemas"]["Picture"][];
+        };
         /** SiteRebuildState */
         SiteRebuildState: {
             /**
@@ -1250,11 +1493,64 @@ export interface components {
              */
             status: "triggered";
         };
+        /** SiteSnapshot */
+        SiteSnapshot: {
+            /** Venues */
+            venues: components["schemas"]["SiteVenue"][];
+        };
+        /** SiteVenue */
+        SiteVenue: {
+            summary: components["schemas"]["VenueSummary"];
+            detail: components["schemas"]["VenueDetail"];
+            /** Pictures */
+            pictures: components["schemas"]["Picture"][];
+            /** Recommendations */
+            recommendations: components["schemas"]["Recommendation"][];
+            /** Halls */
+            halls: components["schemas"]["SiteHall"][];
+        };
         /**
          * StageFloor
          * @enum {string}
          */
         StageFloor: "wood" | "marley" | "concrete" | "other";
+        /** SubmissionFile */
+        SubmissionFile: {
+            /** Index */
+            index: number;
+            /** Name */
+            name: string;
+            /** Content Type */
+            content_type: string;
+            /** Size */
+            size: number;
+        };
+        /**
+         * SubmissionKind
+         * @enum {string}
+         */
+        SubmissionKind: "correction" | "document" | "photos" | "nearby" | "new_venue" | "other";
+        /**
+         * SubmissionPatch
+         * @description Handled or rejected clears the contact details; new reopens it.
+         */
+        SubmissionPatch: {
+            status: components["schemas"]["SubmissionStatus"];
+        };
+        /** SubmissionReceived */
+        SubmissionReceived: {
+            /**
+             * Status
+             * @default received
+             * @constant
+             */
+            status: "received";
+        };
+        /**
+         * SubmissionStatus
+         * @enum {string}
+         */
+        SubmissionStatus: "new" | "handled" | "rejected";
         /** ValidationError */
         ValidationError: {
             /** Location */
@@ -1560,6 +1856,37 @@ export interface operations {
             };
         };
     };
+    list_venue_pictures_api_v1_venues__venue_slug__pictures_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                venue_slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Picture"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_recommendations_api_v1_venues__venue_slug__recommendations_get: {
         parameters: {
             query?: {
@@ -1609,6 +1936,59 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CityWithCount"][];
+                };
+            };
+        };
+    };
+    get_site_snapshot_api_v1_site_snapshot_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SiteSnapshot"];
+                };
+            };
+        };
+    };
+    submit_api_v1_submissions_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_submit_api_v1_submissions_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SubmissionReceived"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
@@ -2260,6 +2640,150 @@ export interface operations {
             };
         };
     };
+    list_venue_pictures_api_v1_admin_venues__venue_slug__pictures_get: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Admin API key */
+                "x-api-key"?: string | null;
+            };
+            path: {
+                venue_slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminPicture"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    upload_venue_picture_api_v1_admin_venues__venue_slug__pictures_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Admin API key */
+                "x-api-key"?: string | null;
+            };
+            path: {
+                venue_slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_upload_venue_picture_api_v1_admin_venues__venue_slug__pictures_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminPicture"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_venue_picture_api_v1_admin_venues__venue_slug__pictures__picture_id__delete: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Admin API key */
+                "x-api-key"?: string | null;
+            };
+            path: {
+                venue_slug: string;
+                picture_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    patch_venue_picture_api_v1_admin_venues__venue_slug__pictures__picture_id__patch: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Admin API key */
+                "x-api-key"?: string | null;
+            };
+            path: {
+                venue_slug: string;
+                picture_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PicturePatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminPicture"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     list_recommendations_api_v1_admin_venues__venue_slug__recommendations_get: {
         parameters: {
             query?: {
@@ -2394,6 +2918,178 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["AdminRecommendation"];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_submissions_api_v1_admin_submissions_get: {
+        parameters: {
+            query?: {
+                status?: components["schemas"]["SubmissionStatus"] | null;
+                limit?: number;
+            };
+            header?: {
+                /** @description Admin API key */
+                "x-api-key"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminSubmission"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_submission_api_v1_admin_submissions__submission_id__get: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Admin API key */
+                "x-api-key"?: string | null;
+            };
+            path: {
+                submission_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminSubmission"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_submission_api_v1_admin_submissions__submission_id__delete: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Admin API key */
+                "x-api-key"?: string | null;
+            };
+            path: {
+                submission_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    patch_submission_api_v1_admin_submissions__submission_id__patch: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Admin API key */
+                "x-api-key"?: string | null;
+            };
+            path: {
+                submission_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SubmissionPatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminSubmission"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    download_submission_file_api_v1_admin_submissions__submission_id__files__file_index__get: {
+        parameters: {
+            query?: never;
+            header?: {
+                /** @description Admin API key */
+                "x-api-key"?: string | null;
+            };
+            path: {
+                submission_id: number;
+                file_index: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {
