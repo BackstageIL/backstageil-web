@@ -14,6 +14,13 @@ npm run check && npm run lint && npm run format:check && npm test   # what CI ru
 npm run gen:api       # regenerate src/lib/api-types.ts after API schema changes (commit it)
 ```
 
+`package.json` `overrides` (BSIL-78) need npm 8.3 or newer (CI: npm 11 with Node 24); an older npm
+ignores them and rewrites the lockfile, so use `npx npm@11 install` if the local npm is older.
+
+- `openapi-typescript` 7.13 declares TypeScript 5 only: it runs on our TypeScript 6 (same output).
+- `minimatch` 11 (security fix) under ESLint, until ESLint itself moves off minimatch 10.
+  Remove an override once the package's own release covers it.
+
 ## Layout and conventions
 
 - `src/pages/` routes (file = URL); dynamic routes use `getStaticPaths()` from the API.
