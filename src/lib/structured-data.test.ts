@@ -5,6 +5,7 @@ import {
   hallJsonLd,
   jsonLdText,
   vendorJsonLd,
+  vendorListJsonLd,
   venueJsonLd,
   websiteJsonLd,
 } from "./structured-data";
@@ -180,6 +181,29 @@ describe("vendorJsonLd", () => {
     expect(organization.description).toBe("Smoke jets");
     expect(organization.areaServed).toEqual([{ "@type": "AdministrativeArea", name: "צפון" }]);
     expect(organization).not.toHaveProperty("telephone");
+  });
+});
+
+describe("vendorListJsonLd", () => {
+  it("lists the vendors in order with their pages", () => {
+    const vendors = [
+      { slug: "a-co", name: "A Co", name_he: "א בע״מ" },
+      { slug: "b-co", name: "B Co", name_he: null },
+    ] as Vendor[];
+    const [page, crumbs] = vendorListJsonLd("he", vendors, SITE);
+    expect(page).toMatchObject({
+      "@type": "CollectionPage",
+      url: "https://www.backstageil.com/he/vendors/",
+      mainEntity: {
+        "@type": "ItemList",
+        numberOfItems: 2,
+        itemListElement: [
+          { position: 1, name: "א בע״מ", url: "https://www.backstageil.com/he/vendors/a-co/" },
+          { position: 2, name: "B Co", url: "https://www.backstageil.com/he/vendors/b-co/" },
+        ],
+      },
+    });
+    expect((crumbs.itemListElement as unknown[]).length).toBe(2);
   });
 });
 

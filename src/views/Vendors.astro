@@ -7,6 +7,7 @@ import { strings, type Locale } from "../i18n";
 import Base from "../layouts/Base.astro";
 import { mailto } from "../lib/contact";
 import { api } from "../lib/site-api";
+import { vendorListJsonLd } from "../lib/structured-data";
 
 interface Props {
   locale: Locale;
@@ -17,7 +18,12 @@ const t = strings(locale).vendors;
 const vendors = await api.listVendors();
 ---
 
-<Base title={t.title} description={t.description} locale={locale}>
+<Base
+  title={t.listTitle}
+  description={t.description}
+  locale={locale}
+  jsonLd={vendorListJsonLd(locale, vendors, Astro.site ?? "https://www.backstageil.com")}
+>
   <h1 class="font-stencil max-w-4xl text-4xl leading-tight font-bold sm:text-5xl">{t.title}</h1>
   <p class="mt-3 max-w-3xl text-lg text-muted">{t.description}</p>
   <VendorBrowser

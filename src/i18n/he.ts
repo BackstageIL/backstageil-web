@@ -383,7 +383,10 @@ export const he: Strings = {
     photos: "תמונות",
     logoAlt: (name: string) => `הלוגו של ${name}`,
     photoAlt: (name: string) => `תמונה של ${name}`,
-    pageDescription: (name: string, what: string) => `${name}: ${what}. פרטי קשר ואזורי שירות.`,
+    pageDescription: (name: string, what: string) =>
+      `${name}: ${what.replace(/[.\s]+$/, "")}. פרטי קשר ואזורי שירות.`,
+    pageTitle: (name: string, offers: string) => `${name}: ${offers} להפקות`,
+    listTitle: "ספקים להפקות בישראל: סאונד, תאורה, אפקטים ועוד",
     back: "כל הספקים",
     categories: {
       sound: "סאונד",

@@ -402,7 +402,9 @@ export const en = {
     logoAlt: (name: string) => `${name} logo`,
     photoAlt: (name: string) => `Photo from ${name}`,
     pageDescription: (name: string, what: string) =>
-      `${name}: ${what}. Contact details and regions served.`,
+      `${name}: ${what.replace(/[.\s]+$/, "")}. Contact details and regions served.`,
+    pageTitle: (name: string, offers: string) => `${name}: ${offers} for productions`,
+    listTitle: "Production vendors in Israel: sound, lighting, effects and more",
     back: "All vendors",
     categories: {
       sound: "Sound",

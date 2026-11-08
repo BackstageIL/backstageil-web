@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import type { HallDocument, VenueDetail } from "./api";
+import type { HallDocument, Vendor, VenueDetail } from "./api";
 import {
   cardSvg,
   fitText,
@@ -8,6 +8,7 @@ import {
   hallCard,
   ogImagePath,
   siteCard,
+  vendorCard,
   venueCard,
   type Measure,
 } from "./og-image";
@@ -49,6 +50,34 @@ describe("ogImagePath", () => {
     expect(ogImagePath("en", { venue: "habima", hall: "rovina" })).toBe(
       "/og/en/venues/habima/halls/rovina.png",
     );
+    expect(ogImagePath("he", { vendor: "smart" })).toBe("/og/he/vendors/smart.png");
+  });
+});
+
+describe("vendorCard", () => {
+  const vendor = {
+    slug: "fx-co",
+    name: "FX Co",
+    name_he: null,
+    description: null,
+    description_he: null,
+    categories: ["dj_effects", "lighting"],
+    districts: [],
+    phone: null,
+    email: null,
+    logo: null,
+    pictures: [],
+  } satisfies Vendor;
+
+  it("shows what the vendor offers and where, and draws", () => {
+    const card = vendorCard("he", vendor);
+    expect(card.title).toBe("FX Co");
+    expect(card.subtitle).toBe("די-ג'יי ואפקטים, תאורה");
+    expect(card.place).toBe("אזורי שירות: כל הארץ");
+    expect(vendorCard("en", { ...vendor, districts: ["north", "haifa"] }).place).toBe(
+      "Serves: North, Haifa",
+    );
+    expect(Buffer.from(renderCard(card).subarray(1, 4)).toString()).toBe("PNG");
   });
 });
 
