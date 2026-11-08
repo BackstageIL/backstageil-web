@@ -53,14 +53,14 @@ export function filterVendors<V extends Pick<Vendor, "categories" | "districts">
   );
 }
 
-/** The categories that at least one vendor offers, in filter order, with how many offer each. */
+/** Every category in filter order, with how many vendors offer it (0 too: the filter shows them all). */
 export function categoryCounts(
   vendors: Pick<Vendor, "categories">[],
 ): { category: VendorCategory; count: number }[] {
   return CATEGORIES.map((category) => ({
     category,
     count: vendors.filter((vendor) => vendor.categories.includes(category)).length,
-  })).filter(({ count }) => count > 0);
+  }));
 }
 
 /** The phone's digits in international form, for wa.me: "+972 54-123 4567" or "054-1234567" → "972541234567". */
