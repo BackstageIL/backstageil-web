@@ -1,0 +1,124 @@
+---
+/** A vendor's page (BSIL-79): logo, what it offers, where it works, photos and how to reach it. */
+import { PUBLIC_CONTACT_EMAIL } from "astro:env/client";
+
+import Gallery from "../components/Gallery.astro";
+import { localePath, nameIn, strings, type Locale } from "../i18n";
+import Base from "../layouts/Base.astro";
+import { mailto } from "../lib/contact";
+import { telLink } from "../lib/nearby";
+import { api } from "../lib/site-api";
+import { vendorJsonLd } from "../lib/structured-data";
+import { descriptionIn, whatsappLink } from "../lib/vendors";
+
+interface Props {
+  locale: Locale;
+  slug: string;
+}
+
+const { locale, slug } = Astro.props;
+const dictionary = strings(locale);
+const t = dictionary.vendors;
+const vendor = await api.vendor(slug);
+const name = nameIn(locale, vendor);
+const description = descriptionIn(locale, vendor);
+const offers = vendor.categories.map((category) => t.categories[category]);
+const serves =
+  vendor.districts.length === 0
+    ? t.wholeCountry
+    : vendor.districts.map((district) => dictionary.district[district]).join(", ");
+const jsonLd = vendorJsonLd(locale, vendor, Astro.site ?? "https://www.backstageil.com");
+const button =
+  "inline-flex items-center rounded px-4 py-2 font-semibold no-underline hover:opacity-90";
+---
+
+<Base
+  title={name}
+  description={t.pageDescription(name, description ?? offers.join(", "))}
+  locale={locale}
+  jsonLd={jsonLd}
+>
+  <p class="text-sm">
+    <a href={localePath(locale, "/vendors/")}>{t.back}</a>
+  </p>
+  <div
+    class:list={[
+      "mt-3 grid grid-cols-1 items-start gap-6",
+      vendor.logo && "lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)]",
+    ]}
+  >
+    <div>
+      <p class="text-sm text-muted">{offers.join(" · ")}</p>
+      <h1 class="font-stencil mt-1 max-w-4xl text-4xl leading-tight font-bold sm:text-5xl">
+        <bdi>{name}</bdi>
+      </h1>
+      {description && (
+        <p class="mt-3 max-w-2xl text-lg" dir="auto">
+          {description}
+        </p>
+      )}
+      <p class="mt-3">
+        <span class="text-muted">{t.serves}:</span> {serves}
+      </p>
+    </div>
+    {vendor.logo && (
+      <img
+        src={vendor.logo.url}
+        width={vendor.logo.width}
+        height={vendor.logo.height}
+        alt={t.logoAlt(name)}
+        class="aspect-[2/1] w-full rounded-lg border border-rule bg-black object-contain"
+      />
+    )}
+  </div>
+
+  <section id="contact" aria-labelledby="contact-title" class="mt-10">
+    <h2 id="contact-title" class="font-stencil flex items-center gap-3 text-2xl font-bold">
+      <span aria-hidden="true" class="inline-block h-1.5 w-5 bg-spike"></span>
+      {t.contact}
+    </h2>
+    <div class="mt-3 flex flex-wrap gap-3 border-t border-rule pt-4">
+      {vendor.phone && (
+        <>
+          <a href={telLink(vendor.phone)} class:list={[button, "bg-cue text-white"]}>
+            {t.call} <bdi class="ms-2 font-normal">{vendor.phone}</bdi>
+          </a>
+          <a
+            href={whatsappLink(vendor.phone)}
+            rel="noopener"
+            class:list={[button, "border border-cue text-cue"]}
+          >
+            {t.whatsapp}
+          </a>
+        </>
+      )}
+      {vendor.email && (
+        <a href={`mailto:${vendor.email}`} class:list={[button, "border border-cue text-cue"]}>
+          {t.email} <bdi class="ms-2 font-normal">{vendor.email}</bdi>
+        </a>
+      )}
+      {!vendor.phone && !vendor.email && (
+        <a
+          href={mailto(PUBLIC_CONTACT_EMAIL, t.contactSubject(vendor.name))}
+          class:list={[button, "bg-cue text-white"]}
+        >
+          {t.contactViaUs}
+        </a>
+      )}
+    </div>
+  </section>
+
+  {vendor.pictures.length > 0 && (
+    <section aria-labelledby="photos-title" class="mt-10">
+      <h2 id="photos-title" class="font-stencil flex items-center gap-3 text-2xl font-bold">
+        <span aria-hidden="true" class="inline-block h-1.5 w-5 bg-spike"></span>
+        {t.photos}
+      </h2>
+      <div class="mt-3">
+        <Gallery pictures={vendor.pictures} hallName={name} locale={locale} />
+      </div>
+    </section>
+  )}
+
+  <p class="mt-10 text-sm text-muted">{t.disclaimer}</p>
+</Base>

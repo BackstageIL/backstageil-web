@@ -13,3 +13,8 @@ export async function hallPaths() {
     venue.halls.map((hall) => ({ params: { venue: venue.slug, hall: hall.slug } })),
   );
 }
+
+export async function vendorPaths() {
+  const vendors = await api.listVendors();
+  return vendors.map((vendor) => ({ params: { vendor: vendor.slug } }));
+}

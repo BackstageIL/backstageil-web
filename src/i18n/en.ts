@@ -29,6 +29,7 @@ export const en = {
   },
   nav: {
     venues: "Venues",
+    vendors: "Vendors",
     about: "About",
     contact: "Contact",
     donate: "Donate",
@@ -189,7 +190,7 @@ export const en = {
     // "{email}" in a paragraph becomes a link to the contact address
     terms: {
       title: "Terms of use",
-      date: "10 October 2026",
+      date: "8 November 2026",
       description: "The terms for using BackstageIL, and how far you can rely on its information.",
       sections: [
         {
@@ -238,6 +239,12 @@ export const en = {
           ],
         },
         {
+          heading: "Vendors directory",
+          paragraphs: [
+            "Vendors in the vendors directory give their own details. BackstageIL doesn't check vendors or stand behind their services, and a listing is not a recommendation. Any agreement with a vendor is between you and the vendor.",
+          ],
+        },
+        {
           heading: "Corrections and removal",
           paragraphs: [
             "If something is wrong, or you represent a venue or a place and want information changed or removed, write to {email}. We handle requests as quickly as we can.",
@@ -259,7 +266,7 @@ export const en = {
     },
     privacy: {
       title: "Privacy",
-      date: "14 October 2026",
+      date: "8 November 2026",
       description: "What BackstageIL collects (very little) and how to reach us about it.",
       sections: [
         {
@@ -277,6 +284,7 @@ export const en = {
           paragraphs: [
             "What you send through the form: your message, any files, and your name and email only if you add them. We use it to check and improve the site's information and to reply. Files stay private and are never published as they are; photos lose their location data. Your name and email are deleted once we've handled your message. To stop spam we keep an anonymous code of your connection that changes every day, never your IP address.",
             "Emails you send us: your address and what you write. We use them only to reply and to act on your request, such as a correction, and delete them when they're no longer needed.",
+            "Vendors directory: we publish the business details a vendor asks us to list (name, description, regions, logo, photos, and a business phone and email). A vendor can ask us to change or remove them at any time at {email}.",
             "Technical logs: like any website, our hosting provider receives technical data such as your IP address and browser type to deliver the pages and keep the site secure. We don't use it to identify you. Error reports from our server contain no IP addresses or other personal details.",
             "Visit counts: to see which pages are useful, we count visits anonymously. This uses no cookies and doesn't store your IP address. Each visit is turned into a one-way code that changes every day, so we see totals (pages viewed, the site you came from, country, type of device) but can't tell who you are or follow you from one day to the next.",
             "Your theme choice: if you switch between light and dark, the choice is saved in your own browser and never reaches us. You can clear it in your browser settings.",
@@ -363,6 +371,52 @@ export const en = {
     south: "South",
     judea_samaria: "Judea and Samaria",
   } satisfies Record<Schemas["District"], string>,
+  vendors: {
+    title: "Production vendors",
+    description:
+      "Sound, lighting, effects, staging and more for productions in Israel, with the regions each vendor serves.",
+    category: "Type",
+    allCategories: "All",
+    region: "Region",
+    allRegions: "All of Israel",
+    count: (n: number) => (n === 1 ? "1 vendor" : `${n} vendors`),
+    none: "No vendors here yet.",
+    wholeCountry: "All of Israel",
+    serves: "Serves",
+    contact: "Contact",
+    contactAction: "Contact",
+    call: "Call",
+    whatsapp: "WhatsApp",
+    email: "Email",
+    contactViaUs: "Ask us to put you in touch",
+    contactSubject: (name: string) => `Contact request: ${name}`,
+    join: {
+      title: "Want your company listed?",
+      text: "Production vendors are welcome to write to us.",
+      action: "Write to us",
+      subject: "Vendors directory: add my company",
+    },
+    disclaimer:
+      "Details come from the vendors themselves. BackstageIL doesn't check or endorse vendors.",
+    photos: "Photos",
+    logoAlt: (name: string) => `${name} logo`,
+    photoAlt: (name: string) => `Photo from ${name}`,
+    pageDescription: (name: string, what: string) =>
+      `${name}: ${what}. Contact details and regions served.`,
+    back: "All vendors",
+    categories: {
+      sound: "Sound",
+      lighting: "Lighting",
+      video: "Video and screens",
+      dj_effects: "DJ and effects",
+      staging: "Stages and rigging",
+      backline: "Backline",
+      power: "Power",
+      transport: "Transport",
+      crew: "Crew",
+      other: "Other",
+    } satisfies Record<Schemas["VendorCategory"], string>,
+  },
   venueType: {
     theater: "Theater",
     culture_hall: "Culture hall",

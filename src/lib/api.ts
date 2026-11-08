@@ -14,6 +14,8 @@ export type VenueDetail = Schemas["VenueDetail"];
 export type HallDocument = Schemas["HallDocument"];
 export type Picture = Schemas["Picture"];
 export type Recommendation = Schemas["Recommendation"];
+export type Vendor = Schemas["Vendor"];
+export type VendorCategory = Schemas["VendorCategory"];
 type SiteSnapshot = Schemas["SiteSnapshot"];
 type SiteVenue = Schemas["SiteVenue"];
 type SiteHall = Schemas["SiteHall"];
@@ -36,6 +38,8 @@ export interface ApiOptions {
 
 interface Snapshot {
   venues: SiteVenue[];
+  vendors: Vendor[];
+  vendorBySlug: Map<string, Vendor>;
   venueBySlug: Map<string, SiteVenue>;
   hallBySlug: Map<string, SiteHall>; // by hallKey()
 }
@@ -44,9 +48,11 @@ function hallKey(venueSlug: string, hallSlug: string): string {
   return `${venueSlug}/${hallSlug}`; // slugs have no "/"
 }
 
-function indexSnapshot({ venues }: SiteSnapshot): Snapshot {
+function indexSnapshot({ venues, vendors }: SiteSnapshot): Snapshot {
   return {
     venues,
+    vendors,
+    vendorBySlug: new Map(vendors.map((vendor) => [vendor.slug, vendor])),
     venueBySlug: new Map(venues.map((venue) => [venue.summary.slug, venue])),
     hallBySlug: new Map(
       venues.flatMap((venue) =>
@@ -119,6 +125,13 @@ export function createApi(baseUrl: string, options: ApiOptions = {}) {
       (await findVenue(venueSlug)).pictures,
     recommendations: async (venueSlug: string): Promise<Recommendation[]> =>
       (await findVenue(venueSlug)).recommendations,
+    /** Published production vendors, in the API's order (BSIL-79). */
+    listVendors: async (): Promise<Vendor[]> => (await snapshot()).vendors,
+    async vendor(vendorSlug: string): Promise<Vendor> {
+      const vendor = (await snapshot()).vendorBySlug.get(vendorSlug);
+      if (vendor === undefined) throw new ApiError(`Vendor not found: ${vendorSlug}`, 404);
+      return vendor;
+    },
   };
 }
 
