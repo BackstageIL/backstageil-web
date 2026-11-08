@@ -152,6 +152,36 @@ export function vendorJsonLd(locale: Locale, vendor: Vendor, site: URL | string)
   ];
 }
 
+/** The vendors directory (BSIL-81): the list of vendors on it, and the path to it. */
+export function vendorListJsonLd(locale: Locale, vendors: Vendor[], site: URL | string): JsonLd[] {
+  const t = strings(locale);
+  const path = localePath(locale, "/vendors/");
+  return [
+    {
+      "@context": CONTEXT,
+      "@type": "CollectionPage",
+      name: t.vendors.title,
+      description: t.vendors.description,
+      url: absolute(site, path),
+      inLanguage: locale,
+      mainEntity: {
+        "@type": "ItemList",
+        numberOfItems: vendors.length,
+        itemListElement: vendors.map((vendor, index) => ({
+          "@type": "ListItem",
+          position: index + 1,
+          name: nameIn(locale, vendor),
+          url: absolute(site, localePath(locale, `/vendors/${vendor.slug}/`)),
+        })),
+      },
+    },
+    breadcrumbs(site, [
+      { name: t.site.name, path: localePath(locale, "/") },
+      { name: t.vendors.title, path },
+    ]),
+  ];
+}
+
 /** A hall page: the hall, inside its venue, and the path to it. */
 export function hallJsonLd(
   locale: Locale,

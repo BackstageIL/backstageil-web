@@ -34,6 +34,14 @@ describe("dictionaries", () => {
     expect(strings("en").locale.names).toEqual({ en: "English", he: "עברית" });
     expect(strings("he").locale.names).toEqual(strings("en").locale.names);
   });
+
+  it("end a vendor page description with one period", () => {
+    for (const locale of ["en", "he"] as const) {
+      const text = strings(locale).vendors.pageDescription("X", "Smoke jets.");
+      expect(text).toMatch(/^X: Smoke jets\. /);
+      expect(text).not.toContain("..");
+    }
+  });
 });
 
 describe("paths", () => {

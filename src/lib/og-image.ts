@@ -5,7 +5,7 @@
  * cards put the text on the right and the plan on the left (the drawing itself is never mirrored).
  */
 import { cityName, nameIn, streetAddress, strings, type Locale } from "../i18n";
-import type { HallDocument, VenueDetail } from "./api";
+import type { HallDocument, Vendor, VenueDetail } from "./api";
 import { gridLines, meters, stagePlan, type PlanInput, type StagePlan } from "./stage-plan";
 
 export const OG_WIDTH = 1200;
@@ -70,7 +70,11 @@ export interface Card {
 }
 
 /** Where a page's preview picture is published. */
-export function ogImagePath(locale: Locale, target: { venue?: string; hall?: string } = {}) {
+export function ogImagePath(
+  locale: Locale,
+  target: { venue?: string; hall?: string; vendor?: string } = {},
+) {
+  if (target.vendor) return `/og/${locale}/vendors/${target.vendor}.png`;
   if (!target.venue) return `/og/${locale}/site.png`;
   if (!target.hall) return `/og/${locale}/venues/${target.venue}.png`;
   return `/og/${locale}/venues/${target.venue}/halls/${target.hall}.png`;
@@ -463,6 +467,24 @@ export function venueCard(locale: Locale, venue: VenueDetail): Card {
           }
         : null,
     alt: t.og.alt(title, place),
+  };
+}
+
+/** A vendor page's card (BSIL-81): name, what it offers, the regions it serves. */
+export function vendorCard(locale: Locale, vendor: Vendor): Card {
+  const t = strings(locale);
+  const title = nameIn(locale, vendor);
+  const offers = vendor.categories.map((category) => t.vendors.categories[category]).join(", ");
+  const serves =
+    vendor.districts.length === 0
+      ? t.vendors.wholeCountry
+      : vendor.districts.map((district) => t.district[district]).join(", ");
+  return {
+    locale,
+    title,
+    subtitle: offers,
+    place: `${t.vendors.serves}: ${serves}`,
+    alt: t.og.alt(title, offers),
   };
 }
 

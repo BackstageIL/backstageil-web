@@ -6,6 +6,7 @@ import Gallery from "../components/Gallery.astro";
 import { localePath, nameIn, strings, type Locale } from "../i18n";
 import Base from "../layouts/Base.astro";
 import { mailto } from "../lib/contact";
+import { ogImagePath, vendorCard } from "../lib/og-image";
 import { telLink } from "../lib/nearby";
 import { api } from "../lib/site-api";
 import { vendorJsonLd } from "../lib/structured-data";
@@ -28,14 +29,16 @@ const serves =
     ? t.wholeCountry
     : vendor.districts.map((district) => dictionary.district[district]).join(", ");
 const jsonLd = vendorJsonLd(locale, vendor, Astro.site ?? "https://www.backstageil.com");
+const imagePath = ogImagePath(locale, { vendor: vendor.slug });
 const button =
   "inline-flex items-center rounded px-4 py-2 font-semibold no-underline hover:opacity-90";
 ---
 
 <Base
-  title={name}
+  title={t.pageTitle(name, offers.join(", "))}
   description={t.pageDescription(name, description ?? offers.join(", "))}
   locale={locale}
+  image={{ path: imagePath, alt: vendorCard(locale, vendor).alt }}
   jsonLd={jsonLd}
 >
   <p class="text-sm">
