@@ -4,7 +4,8 @@
  * Facts only, from the same API data the page shows. Not visible to visitors.
  */
 import { cityName, localePath, nameIn, streetAddress, strings, type Locale } from "../i18n";
-import type { HallDocument, VenueDetail } from "./api";
+import type { HallDocument, Vendor, VenueDetail } from "./api";
+import { descriptionIn } from "./vendors";
 
 export type JsonLd = Record<string, unknown>;
 
@@ -112,6 +113,41 @@ export function venueJsonLd(
     breadcrumbs(site, [
       { name: strings(locale).site.name, path: localePath(locale, "/") },
       { name: nameIn(locale, venue), path: venuePath(locale, venue.slug) },
+    ]),
+  ];
+}
+
+/** A vendor page (BSIL-79): the business, where it works, how to reach it. */
+export function vendorJsonLd(locale: Locale, vendor: Vendor, site: URL | string): JsonLd[] {
+  const t = strings(locale);
+  const path = localePath(locale, `/vendors/${vendor.slug}/`);
+  const url = absolute(site, path);
+  const description = descriptionIn(locale, vendor);
+  const organization: JsonLd = {
+    "@context": CONTEXT,
+    "@type": "Organization",
+    "@id": `${url}#vendor`,
+    name: nameIn(locale, vendor),
+    ...alternateName(locale, vendor),
+    url,
+    ...(description ? { description } : {}),
+    ...(vendor.logo ? { logo: vendor.logo.url } : {}),
+    ...(vendor.phone ? { telephone: vendor.phone } : {}),
+    ...(vendor.email ? { email: vendor.email } : {}),
+    areaServed:
+      vendor.districts.length === 0
+        ? { "@type": "Country", name: "Israel" }
+        : vendor.districts.map((district) => ({
+            "@type": "AdministrativeArea",
+            name: t.district[district],
+          })),
+  };
+  return [
+    organization,
+    breadcrumbs(site, [
+      { name: t.site.name, path: localePath(locale, "/") },
+      { name: t.vendors.title, path: localePath(locale, "/vendors/") },
+      { name: nameIn(locale, vendor), path },
     ]),
   ];
 }

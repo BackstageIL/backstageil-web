@@ -1,0 +1,12 @@
+---
+import { vendorPaths } from "../../lib/paths";
+import Vendor from "../../views/Vendor.astro";
+
+export function getStaticPaths() {
+  return vendorPaths();
+}
+
+const { vendor } = Astro.params as { vendor: string };
+---
+
+<Vendor locale="en" slug={vendor} />

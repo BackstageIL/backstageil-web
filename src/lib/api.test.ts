@@ -32,6 +32,10 @@ const snapshot = {
       halls: [{ document: { slug: "main", name: "Beta main" }, pictures: [{ id: 4 }] }],
     },
   ],
+  vendors: [
+    { slug: "sound-co", name: "Sound Co" },
+    { slug: "light-co", name: "Light Co" },
+  ],
 };
 
 function apiWith(fetch: typeof globalThis.fetch) {
@@ -44,6 +48,7 @@ describe("createApi", () => {
     const api = apiWith(fetch);
 
     const venues = await api.listVenues();
+    const [vendors, vendor] = await Promise.all([api.listVendors(), api.vendor("light-co")]);
     const [detail, hall, otherHall, pictures, venuePictures, places] = await Promise.all([
       api.venue("alpha"),
       api.hall("alpha", "small"),
@@ -60,6 +65,8 @@ describe("createApi", () => {
     expect(pictures).toEqual([{ id: 3 }]);
     expect(venuePictures).toEqual([{ id: 1 }]);
     expect(places).toEqual([{ id: 2 }]);
+    expect(vendors.map((v) => v.slug)).toEqual(["sound-co", "light-co"]);
+    expect(vendor.name).toBe("Light Co");
     expect(fetch.mock.calls.map(([url]) => String(url))).toEqual([SNAPSHOT_URL]);
   });
 
@@ -121,6 +128,7 @@ describe("createApi", () => {
     ["recommendations", (api: ReturnType<typeof apiWith>) => api.recommendations("gone")],
     ["hall", (api: ReturnType<typeof apiWith>) => api.hall("alpha", "gone")],
     ["hall pictures", (api: ReturnType<typeof apiWith>) => api.pictures("gone", "main")],
+    ["vendor", (api: ReturnType<typeof apiWith>) => api.vendor("gone")],
   ])("reports a missing %s as a 404", async (_name, call) => {
     const error = await call(apiWith(vi.fn(async () => json(snapshot)))).catch((e: unknown) => e);
 

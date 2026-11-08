@@ -28,13 +28,18 @@ ignores them and rewrites the lockfile, so use `npx npm@11 install` if the local
   the site snapshot, and every method reads from it;
   `src/lib/site-api.ts` the instance for this build (`API_URL` from `astro:env`).
 - `src/lib/api-types.ts` is generated from the API's OpenAPI schema: never edit by hand.
+- Vendors directory (BSIL-79): `/vendors/` (`VendorBrowser.tsx` filters by type and region) and
+  `/vendors/<slug>/`; `src/lib/vendors.ts`. Never call a listing "sponsored"; companies that want
+  to be listed write to the contact email (handled outside the site).
 - React only where the page needs interactivity (islands with `client:*`); everything else is
   `.astro` rendered to HTML at build time.
 - Every UI string through i18n (English first, Hebrew later): no hard-coded copy in components.
   Use logical CSS (`ms-`/`pe-`/`start`/`end`) so RTL works later.
 - Mobile-first (used backstage on phones); light/dark follows the device.
 - Content is neutral facts from the API; the site never stores or shows personal contact
-  details. The only contact address is the project email (`PUBLIC_CONTACT_EMAIL`).
+  details. The project email (`PUBLIC_CONTACT_EMAIL`) is the site's contact address; the only
+  other contact details shown are a vendor's own business phone and email, which the vendor
+  gave for publication (BSIL-79).
 - Every behavior change comes with tests (Vitest for `src/lib`).
 
 ## Way of work

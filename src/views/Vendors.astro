@@ -1,0 +1,30 @@
+---
+/** The vendors directory (BSIL-79): every published vendor, filtered by type and region. */
+import { PUBLIC_CONTACT_EMAIL } from "astro:env/client";
+
+import VendorBrowser from "../components/VendorBrowser";
+import { strings, type Locale } from "../i18n";
+import Base from "../layouts/Base.astro";
+import { mailto } from "../lib/contact";
+import { api } from "../lib/site-api";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = strings(locale).vendors;
+const vendors = await api.listVendors();
+---
+
+<Base title={t.title} description={t.description} locale={locale}>
+  <h1 class="font-stencil max-w-4xl text-4xl leading-tight font-bold sm:text-5xl">{t.title}</h1>
+  <p class="mt-3 max-w-3xl text-lg text-muted">{t.description}</p>
+  <VendorBrowser
+    client:load
+    vendors={vendors}
+    locale={locale}
+    joinHref={mailto(PUBLIC_CONTACT_EMAIL, t.join.subject)}
+  />
+  <p class="mt-8 text-sm text-muted">{t.disclaimer}</p>
+</Base>

@@ -1,7 +1,13 @@
 import { describe, expect, it } from "vitest";
 
-import type { HallDocument, VenueDetail } from "./api";
-import { hallJsonLd, jsonLdText, venueJsonLd, websiteJsonLd } from "./structured-data";
+import type { HallDocument, Vendor, VenueDetail } from "./api";
+import {
+  hallJsonLd,
+  jsonLdText,
+  vendorJsonLd,
+  venueJsonLd,
+  websiteJsonLd,
+} from "./structured-data";
 
 const SITE = "https://www.backstageil.com";
 const city = {
@@ -118,6 +124,62 @@ describe("hallJsonLd", () => {
       containedInPlace: { "@id": "https://www.backstageil.com/venues/habima-theater/#venue" },
     });
     expect((crumbs.itemListElement as unknown[]).length).toBe(3);
+  });
+});
+
+describe("vendorJsonLd", () => {
+  const vendor = {
+    slug: "fx-co",
+    name: "FX Co",
+    name_he: "אפקטים בע״מ",
+    description: "Smoke jets",
+    description_he: null,
+    categories: ["dj_effects"],
+    districts: [],
+    phone: "+972 54-123-4567",
+    email: "info@fx.example",
+    logo: {
+      id: 1,
+      caption: null,
+      width: 800,
+      height: 400,
+      url: "https://img.test/l.webp",
+      thumbnail_url: "https://img.test/t.webp",
+    },
+    pictures: [],
+  } satisfies Vendor;
+
+  it("describes the business, its contact and the whole country", () => {
+    const [organization, crumbs] = vendorJsonLd("en", vendor, SITE);
+    expect(organization).toMatchObject({
+      "@type": "Organization",
+      name: "FX Co",
+      alternateName: "אפקטים בע״מ",
+      url: "https://www.backstageil.com/vendors/fx-co/",
+      description: "Smoke jets",
+      logo: "https://img.test/l.webp",
+      telephone: "+972 54-123-4567",
+      email: "info@fx.example",
+      areaServed: { "@type": "Country", name: "Israel" },
+    });
+    expect((crumbs.itemListElement as { name: string }[]).map((item) => item.name)).toEqual([
+      "BackstageIL",
+      "Production vendors",
+      "FX Co",
+    ]);
+  });
+
+  it("lists the regions served, in the page language", () => {
+    const [organization] = vendorJsonLd(
+      "he",
+      { ...vendor, districts: ["north"], phone: null },
+      SITE,
+    );
+    expect(organization.url).toBe("https://www.backstageil.com/he/vendors/fx-co/");
+    expect(organization.name).toBe("אפקטים בע״מ");
+    expect(organization.description).toBe("Smoke jets");
+    expect(organization.areaServed).toEqual([{ "@type": "AdministrativeArea", name: "צפון" }]);
+    expect(organization).not.toHaveProperty("telephone");
   });
 });
 
