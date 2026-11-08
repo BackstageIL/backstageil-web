@@ -52,8 +52,21 @@ describe("filterVendors", () => {
 });
 
 describe("categoryCounts", () => {
-  it("lists only the categories someone offers, in filter order", () => {
-    expect(categoryCounts(vendors)).toEqual([
+  it("lists every category in filter order, the empty ones too", () => {
+    const counts = categoryCounts(vendors);
+    expect(counts.map(({ category }) => category)).toEqual([
+      "sound",
+      "lighting",
+      "video",
+      "dj_effects",
+      "staging",
+      "backline",
+      "power",
+      "transport",
+      "crew",
+      "other",
+    ]);
+    expect(counts.filter(({ count }) => count > 0)).toEqual([
       { category: "sound", count: 1 },
       { category: "lighting", count: 2 },
       { category: "dj_effects", count: 1 },

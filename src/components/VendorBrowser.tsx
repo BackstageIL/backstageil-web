@@ -54,11 +54,14 @@ export default function VendorBrowser({ vendors, locale, joinHref }: Props) {
   };
 
   const shown = filterVendors(vendors, filters);
-  const chips: { value: VendorCategory | ""; label: string }[] = [
-    { value: "", label: t.allCategories },
-    ...categoryCounts(vendors).map(({ category }) => ({
+  // Every type is shown, so visitors and vendors see what the directory covers; types without
+  // vendors yet are lighter
+  const chips: { value: VendorCategory | ""; label: string; empty: boolean }[] = [
+    { value: "", label: t.allCategories, empty: false },
+    ...categoryCounts(vendors).map(({ category, count }) => ({
       value: category,
       label: t.categories[category],
+      empty: count === 0,
     })),
   ];
 
@@ -74,7 +77,7 @@ export default function VendorBrowser({ vendors, locale, joinHref }: Props) {
                 type="button"
                 aria-pressed={filters.category === chip.value}
                 onClick={() => choose({ category: chip.value })}
-                className="rounded-full border border-rule bg-sheet px-3 py-1 text-sm text-ink aria-pressed:border-ink aria-pressed:bg-ink aria-pressed:text-paper"
+                className={`rounded-full border border-rule bg-sheet px-3 py-1 text-sm aria-pressed:border-ink aria-pressed:bg-ink aria-pressed:text-paper ${chip.empty ? "text-muted" : "text-ink"}`}
               >
                 {chip.label}
               </button>
