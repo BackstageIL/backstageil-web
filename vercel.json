@@ -1,5 +1,27 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "redirects": [
+    {
+      "source": "/venues/heichal-hatarbut-tiberias/halls/hall-1",
+      "destination": "/venues/heichal-hatarbut-tiberias/halls/cinematheque-hall/",
+      "permanent": true
+    },
+    {
+      "source": "/venues/heichal-hatarbut-tiberias/halls/hall-1/",
+      "destination": "/venues/heichal-hatarbut-tiberias/halls/cinematheque-hall/",
+      "permanent": true
+    },
+    {
+      "source": "/he/venues/heichal-hatarbut-tiberias/halls/hall-1",
+      "destination": "/he/venues/heichal-hatarbut-tiberias/halls/cinematheque-hall/",
+      "permanent": true
+    },
+    {
+      "source": "/he/venues/heichal-hatarbut-tiberias/halls/hall-1/",
+      "destination": "/he/venues/heichal-hatarbut-tiberias/halls/cinematheque-hall/",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
