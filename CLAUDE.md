@@ -40,6 +40,8 @@ ignores them and rewrites the lockfile, so use `npx npm@11 install` if the local
   details. The project email (`PUBLIC_CONTACT_EMAIL`) is the site's contact address; the only
   other contact details shown are a vendor's own business phone and email, which the vendor
   gave for publication (BSIL-79).
+- A hall or venue whose URL (slug) changes keeps its old URL: add a permanent redirect in
+  `vercel.json` `redirects`, with and without the trailing slash, for `/` and `/he/` (BSIL-83).
 - Every behavior change comes with tests (Vitest for `src/lib`).
 
 ## Way of work
