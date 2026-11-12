@@ -18,17 +18,17 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/react": "^7.1.2",
+    "@astrojs/react": "^7.1.4",
     "@astrojs/sitemap": "^3.7.4",
     "@fontsource-variable/archivo": "^5.3.0",
     "@fontsource-variable/atkinson-hyperlegible-next": "^5.3.0",
     "@fontsource-variable/heebo": "^5.3.0",
     "@resvg/resvg-js": "^2.6.2",
-    "@tailwindcss/vite": "^4.3.3",
+    "@tailwindcss/vite": "^4.3.5",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vercel/analytics": "^2.0.1",
-    "astro": "^7.4.4",
+    "astro": "^7.4.7",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "tailwindcss": "^4.3.3",
@@ -48,7 +48,7 @@
     "prettier-plugin-astro": "^1.1.2",
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.72.1",
-    "vitest": "^5.0.5"
+    "vitest": "^5.1.0"
   },
   "overrides": {
     "openapi-typescript": {
